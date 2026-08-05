@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@layer base {
+  html, body, :root {
+    scroll-behavior: smooth !important;
+    scrollbar-width: thin;
+    scrollbar-color: #0058be #f0f3ff;
+  }
+  * {
+    font-family: 'Poppins', sans-serif;
+  }
+}
+
+/* Custom Interactive Blue Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f4ff;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #1e6ee2 0%, #0058be 100%);
+  border-radius: 9999px;
+  border: 2px solid #f0f4ff;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #2a7af3 0%, #004494 100%);
+  border-color: #e2eafc;
+  box-shadow: 0 0 10px rgba(0, 88, 190, 0.5);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #003677;
+  border-color: #d0e0ff;
+}
+
+/* Smooth custom scrollbars for inner container elements */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #2170e4;
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #004494;
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Luminous Portfolio Admin",
+  "description": "A professional Portfolio & Admin Console application to curate work, manage projects, experience, skills, and profile data with MongoDB integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
