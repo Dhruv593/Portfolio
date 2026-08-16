@@ -10,6 +10,7 @@ class DatabaseService {
   private isConnected = false;
   private connectionError = '';
   private currentUri = '';
+  private connectingPromise: Promise<boolean> | null = null;
 
   private constructor() {}
 
@@ -26,44 +27,59 @@ class DatabaseService {
     if (!targetUri) {
       this.isConnected = false;
       this.connectionError = 'No MONGODB_URI environment variable or configuration found.';
-      logger.mongoStatus('DISCONNECTED', '', this.connectionError);
       return false;
+    }
+
+    // Reuse existing connection if active and matching URI
+    if (this.isConnected && this.client && this.db && this.currentUri === targetUri && !customUri) {
+      return true;
+    }
+
+    // Return in-flight connection promise to prevent concurrent duplicate connections
+    if (this.connectingPromise && !customUri) {
+      return this.connectingPromise;
     }
 
     this.currentUri = targetUri;
 
-    try {
-      if (this.client) {
-        await this.client.close().catch(() => {});
+    this.connectingPromise = (async () => {
+      try {
+        if (this.client) {
+          await this.client.close().catch(() => {});
+        }
+
+        this.client = new MongoClient(targetUri, {
+          serverSelectionTimeoutMS: 5000,
+          connectTimeoutMS: 5000,
+          maxPoolSize: 10,
+          minPoolSize: 1,
+          retryWrites: true,
+        });
+
+        await this.client.connect();
+        this.db = this.client.db('portfolio_admin');
+        this.isConnected = true;
+        this.connectionError = '';
+        dbStore.mongoUri = targetUri;
+        saveJsonStore();
+
+        logger.mongoStatus('CONNECTED', targetUri);
+
+        // Perform auto-sync between memory/JSON and MongoDB Atlas
+        await this.syncCollections();
+
+        return true;
+      } catch (err: any) {
+        this.isConnected = false;
+        this.connectionError = err.message || 'Failed to connect to MongoDB cluster';
+        logger.mongoStatus('FAILED', targetUri, this.connectionError);
+        return false;
+      } finally {
+        this.connectingPromise = null;
       }
+    })();
 
-      this.client = new MongoClient(targetUri, {
-        serverSelectionTimeoutMS: 5000,
-        connectTimeoutMS: 5000,
-        maxPoolSize: 10,
-        minPoolSize: 1,
-        retryWrites: true,
-      });
-
-      await this.client.connect();
-      this.db = this.client.db('portfolio_admin');
-      this.isConnected = true;
-      this.connectionError = '';
-      dbStore.mongoUri = targetUri;
-      saveJsonStore();
-
-      logger.mongoStatus('CONNECTED', targetUri);
-
-      // Perform auto-sync between memory/JSON and MongoDB Atlas
-      await this.syncCollections();
-
-      return true;
-    } catch (err: any) {
-      this.isConnected = false;
-      this.connectionError = err.message || 'Failed to connect to MongoDB cluster';
-      logger.mongoStatus('FAILED', targetUri, this.connectionError);
-      return false;
-    }
+    return this.connectingPromise;
   }
 
   private async syncCollections() {

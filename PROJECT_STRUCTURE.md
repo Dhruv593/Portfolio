@@ -9,7 +9,8 @@ This document provides a comprehensive overview of the file structure, architect
 ```
 ├── api/
 │   └── index.ts                 # Vercel serverless entry point exporting Express app
-├── server/                      # Full-stack Node.js / Express backend
+├── backend/                     # Full-stack Node.js / Express backend
+│   ├── app.ts                   # Shared Express application, middleware & router configuration
 │   ├── config/
 │   │   └── env.config.ts        # Zod environment variable schema & validation
 │   ├── controllers/             # Express route controller handlers
@@ -131,8 +132,8 @@ This document provides a comprehensive overview of the file structure, architect
 ### 🚀 Deployment & Root Configuration
 
 * **`vercel.json`**: Vercel configuration file. Defines routing rewrites to send `/api/*` requests to the serverless function handler at `/api/index.ts` and all frontend routes to `/index.html`.
-* **`api/index.ts`**: Serverless function entry point for Vercel. Initializes Express, sets up CORS and security headers, connects lazily to MongoDB, and serves all `/api` endpoints.
-* **`server.ts`**: Standalone Express server entry point used when running via Node.js / Docker. Mounts Vite middleware in development and static file serving in production.
+* **`api/index.ts`**: Thin serverless function entry point for Vercel. Imports and exports the shared Express application (`backend/app.ts`).
+* **`server.ts`**: Standalone Express server bootstrap used when running via Node.js / Docker / local development (`npm run dev`). Mounts Vite middleware in development and static file serving in production.
 * **`vite.config.ts`**: Vite configuration. Handles React plugin integration, dev server configuration (port 3000), and excludes `portfolio_db.json` from hot-reload watching to prevent state reset triggers.
 * **`package.json`**: Node manifest containing all required dependencies (Express, React, Lucide, MongoDB, Zod, JWT, Tailwind, etc.) and npm scripts.
 * **`.env.example`**: Reference file showing required environment variables (`ADMIN_PASSWORD`, `JWT_SECRET`, `MONGODB_URI`, `CONTACT_RECEIVER_EMAIL`, `SMTP_*`).
@@ -140,20 +141,23 @@ This document provides a comprehensive overview of the file structure, architect
 
 ---
 
-### 🖥️ Backend Architecture (`/server`)
+### 🖥️ Backend Architecture (`/backend`)
+
+#### 🧱 Core Application
+* **`backend/app.ts`**: Centralized Express application file containing all middleware registration (Helmet, CORS, JSON body parsers, no-store headers, lazy MongoDB connection, rate limiting), API route mounting (`/api`), and global error handling.
 
 #### ⚙️ Configuration & DB
-* **`server/config/env.config.ts`**: Parses and validates process environment variables using Zod schemas. Enforces security requirements for `ADMIN_PASSWORD` and `JWT_SECRET`.
-* **`server/db/mongodb.ts`**: MongoDB connection manager. Provides singleton connection pool and methods to access MongoDB collections.
-* **`server/db/jsonStore.ts`**: Fallback storage engine reading and writing synchronously to `portfolio_db.json`.
+* **`backend/config/env.config.ts`**: Parses and validates process environment variables using Zod schemas. Enforces security requirements for `ADMIN_PASSWORD` and `JWT_SECRET`.
+* **`backend/db/mongodb.ts`**: MongoDB connection manager. Provides singleton connection pool and methods to access MongoDB collections.
+* **`backend/db/jsonStore.ts`**: Fallback storage engine reading and writing to `portfolio_db.json` with memory caching and read-only filesystem protection for serverless.
 
 #### 🛡️ Middleware
-* **`server/middleware/auth.middleware.ts`**: Verifies JWT tokens in `Authorization: Bearer <token>` headers to protect administrative API endpoints.
-* **`server/middleware/error.middleware.ts`**: Central error handler formatting operational errors into consistent JSON responses.
-* **`server/middleware/rateLimiter.ts`**: Prevents abuse by limiting request rates on sensitive endpoints like admin login and contact submission.
-* **`server/middleware/validate.middleware.ts`**: Validates incoming request body payloads against Zod schemas.
+* **`backend/middleware/auth.middleware.ts`**: Verifies JWT tokens in `Authorization: Bearer <token>` headers to protect administrative API endpoints.
+* **`backend/middleware/error.middleware.ts`**: Central error handler formatting operational errors into consistent JSON responses.
+* **`backend/middleware/rateLimiter.ts`**: Prevents abuse by limiting request rates on sensitive endpoints like admin login and contact submission.
+* **`backend/middleware/validate.middleware.ts`**: Validates incoming request body payloads against Zod schemas.
 
-#### 🔀 Routes (`/server/routes`)
+#### 🔀 Routes (`/backend/routes`)
 * **`index.ts`**: Assembles all endpoint routes under `/api` (`/api/admin`, `/api/projects`, `/api/blogs`, `/api/skills`, `/api/experience`, `/api/education`, `/api/profile`, `/api/contact`, `/api/health`).
 * **`admin.routes.ts`**: Endpoints for admin authentication (`POST /api/admin/login`, `GET /api/admin/verify`).
 * **`project.routes.ts`**: CRUD endpoints for portfolio projects.
@@ -165,7 +169,7 @@ This document provides a comprehensive overview of the file structure, architect
 * **`contact.routes.ts`**: Endpoints to send contact messages and retrieve them for the admin dashboard.
 * **`health.routes.ts`**: Health-check endpoint reporting server uptime and database connectivity.
 
-#### 🧠 Services & Controllers (`/server/services` & `/server/controllers`)
+#### 🧠 Services & Controllers (`/backend/services` & `/backend/controllers`)
 * **`admin.service.ts` / `admin.controller.ts`**: Handles admin login, password checking, and JWT token issuance.
 * **`project.service.ts` / `project.controller.ts`**: Manages fetching, creating, editing, and deleting project entries in MongoDB (or fallback JSON).
 * **`blog.service.ts` / `blog.controller.ts`**: Manages blog post operations.

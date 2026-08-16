@@ -1,0 +1,284 @@
+{
+  "projects": [
+    {
+      "id": "proj-3",
+      "name": "Minimalist Branding",
+      "category": "Identity Design",
+      "status": "Draft",
+      "dateAdded": "Nov 04, 2023",
+      "image": "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=800&q=80",
+      "description": "Developing a cohesive visual language for an emerging tech startup, from logo to digital presence.",
+      "longDescription": "Swiss-inspired minimalist brand identity system including typography guidelines, icon sets, brand collateral, and responsive design guidelines.",
+      "githubUrl": "https://github.com/example/brand-identity",
+      "liveUrl": "https://example.com/branding",
+      "tags": [
+        "BRANDING",
+        "VISUAL DESIGN",
+        "FIGMA"
+      ],
+      "featured": true
+    },
+    {
+      "id": "proj-4",
+      "name": "Architecture Portfolio",
+      "category": "Website Design",
+      "status": "Published",
+      "dateAdded": "Aug 15, 2023",
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+      "description": "Cinematic, full-screen architectural showcase featuring ultra-smooth parallax transitions and dark mode toggle.",
+      "longDescription": "High-end portfolio for a renowned architecture firm highlighting physical structures with high-resolution gallery viewports and interactive 3D site plans.",
+      "githubUrl": "https://github.com/example/arch-portfolio",
+      "liveUrl": "https://example.com/architecture",
+      "tags": [
+        "WEB DESIGN",
+        "THREEJS",
+        "PORTFOLIO"
+      ],
+      "featured": false
+    },
+    {
+      "id": "proj-5",
+      "name": "AI Code Assistant UI",
+      "category": "Developer Tools",
+      "status": "Published",
+      "dateAdded": "Dec 01, 2023",
+      "image": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
+      "description": "Generative AI interface with split-pane code editing, inline diffing, and real-time syntax highlighting.",
+      "longDescription": "Next-generation code generation workspace with interactive prompt chaining, model comparison viewports, and automated test suite creation.",
+      "githubUrl": "https://github.com/example/ai-code-ui",
+      "liveUrl": "https://example.com/aicode",
+      "tags": [
+        "AI",
+        "REACT",
+        "MONACO",
+        "TAILWIND"
+      ],
+      "featured": true
+    },
+    {
+      "id": "proj-6",
+      "name": "FinTech Mobile Wallet",
+      "category": "Mobile App",
+      "status": "Published",
+      "dateAdded": "Jan 10, 2024",
+      "image": "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80",
+      "description": "Cross-border payment app with biometrics authentication, virtual card management, and expense categorizer.",
+      "longDescription": "Secure mobile banking application with instant crypto-to-fiat conversion, peer-to-peer transfers, and visual monthly budgeting insights.",
+      "githubUrl": "https://github.com/example/fintech-wallet",
+      "liveUrl": "https://example.com/wallet",
+      "tags": [
+        "FINTECH",
+        "MOBILE APP",
+        "IOS",
+        "ANDROID"
+      ],
+      "featured": false
+    }
+  ],
+  "blogs": [
+    {
+      "id": "blog-1",
+      "title": "Architecting Scalable React & TypeScript Applications in 2026",
+      "slug": "architecting-scalable-react-typescript-apps",
+      "category": "Engineering Architecture",
+      "status": "Published",
+      "dateAdded": "Jan 15, 2026",
+      "readTime": "6 min read",
+      "image": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
+      "excerpt": "Key strategies for structuring large-scale web applications with modern state management, strict type boundaries, and modular component design.",
+      "content": "Building large-scale React applications requires more than just knowing component syntax. As products grow, codebase maintainability and team velocity depend directly on structural discipline and strong architectural boundaries.\n\n### 1. Domain-Driven Directory Organization\nInstead of grouping files by type (e.g. `/components`, `/hooks`, `/types`), structure your application by domain feature modules:\n\n```\nsrc/\n├── features/\n│   ├── authentication/\n│   ├── dashboard/\n│   └── portfolio/\n├── shared/\n│   ├── components/\n│   └── utils/\n```\n\nThis ensures that developers working on a feature can locate all related logic, state, and UI representations in a unified context.\n\n### 2. Strict Type Isolation\nAvoid passing loose `any` or overly generic types across boundaries. Define central interface definitions in domain schemas and enforce type-safe API client wrappers to capture runtime contract mismatches early.\n\n### 3. Performance Optimization & Lazy Hydration\nBy leveraging React 18 concurrent features, server-side data proxies, and dynamic imports for non-critical views, page load times drop dramatically while preserving crisp interaction fluidity.",
+      "tags": [
+        "React",
+        "TypeScript",
+        "Frontend",
+        "Architecture"
+      ],
+      "author": "Dhruv Lad",
+      "featured": true
+    },
+    {
+      "id": "blog-2",
+      "title": "Designing Intentional Micro-Interactions for Modern Web Apps",
+      "slug": "designing-intentional-micro-interactions",
+      "category": "UI/UX Design",
+      "status": "Published",
+      "dateAdded": "Feb 02, 2026",
+      "readTime": "4 min read",
+      "image": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80",
+      "excerpt": "How subtle animation cues, spring physics, and tactical hover feedback elevate user comprehension and product polish.",
+      "content": "Micro-interactions are the secret handshake between a product and its user. When crafted with purpose, they turn routine tasks into memorable, fluid visual moments.\n\n### The Anatomy of a Great Micro-Interaction\nEvery meaningful UI feedback loop consists of four key components:\n1. **Trigger:** A user gesture like a button press, drag, or hover state.\n2. **Rule:** The underlying constraint governing how state transitions behave.\n3. **Feedback:** Visual, tactile, or motion response signaling completion.\n4. **Loops & Modes:** Persistent visual cues reflecting current state.\n\n> \"Details aren't just details; they make the product.\" — Charles Eames\n\n### Motion with Physics\nWhen applying animations, avoid linear easings. Use cubic-bezier curves or spring physics parameters to make UI elements feel weighted and tactile.",
+      "tags": [
+        "UI/UX",
+        "Animation",
+        "Design Systems",
+        "CSS"
+      ],
+      "author": "Dhruv Lad",
+      "featured": true
+    },
+    {
+      "id": "blog-3",
+      "title": "Building Enterprise Express & MongoDB APIs with Resilient Fallbacks",
+      "slug": "building-enterprise-express-mongodb-apis",
+      "category": "Backend Development",
+      "status": "Published",
+      "dateAdded": "Mar 18, 2026",
+      "readTime": "8 min read",
+      "image": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1200&q=80",
+      "excerpt": "Implementing hybrid JSON file storage and MongoDB synchronization to guarantee zero-downtime local preview and cloud resilience.",
+      "content": "When building modern portfolio management backends, backend services should remain operational whether connected to cloud database instances or offline local file stores.\n\n### Hybrid Storage Strategy\nBy abstracting database access behind a unified service layer, backend controllers can seamlessly read and write to local JSON persistence while syncing asynchronously with MongoDB when cloud credentials are established.\n\n```ts\n// Service abstraction layer pattern\nexport class DatabaseService {\n  async getCollection(name: string) {\n    if (this.isMongoConnected()) {\n      return this.getMongoCollection(name);\n    }\n    return this.getLocalStoreCollection(name);\n  }\n}\n```\n\n### API Security & Middleware Hygiene\nAlways validate incoming payload bodies using Zod schemas, sanitize request headers using Helmet, and apply per-IP rate limiting to shield endpoints from high-concurrency automated scripts.",
+      "tags": [
+        "Node.js",
+        "Express",
+        "MongoDB",
+        "Backend"
+      ],
+      "author": "Dhruv Lad",
+      "featured": false
+    }
+  ],
+  "experience": [
+    {
+      "id": "exp-1",
+      "role": "AI Engineer",
+      "company": "Schbang",
+      "period": "2026 - Present",
+      "isCurrent": true,
+      "location": "India",
+      "description": "Leading the product design team in creating a next-generation SaaS platform. Focused on scalable design systems and mentoring junior designers while collaborating closely with the engineering team to ensure high-fidelity implementation."
+    },
+    {
+      "id": "exp-2",
+      "role": "UI Developer & Design Engineer",
+      "company": "Digital Craft Studio",
+      "period": "2018 — 2021",
+      "isCurrent": false,
+      "location": "Austin, TX",
+      "description": "Bridged the gap between high-level designs and functional code. Developed responsive, accessible web components and led the migration of legacy projects to modern frontend frameworks."
+    },
+    {
+      "id": "exp-3",
+      "role": "Design Intern",
+      "company": "Creative Flow Agency",
+      "period": "2017 — 2018",
+      "isCurrent": false,
+      "location": "New York, NY",
+      "description": "Assisted in the creation of visual assets for client campaigns and supported the design team in wireframing user flows for mobile applications."
+    }
+  ],
+  "education": [
+    {
+      "id": "edu-1",
+      "degree": "B.S. in Computer Science & Human-Computer Interaction",
+      "institution": "University of California, Berkeley",
+      "period": "2014 — 2018",
+      "location": "Berkeley, CA",
+      "description": "Focused on software engineering, user interface design, web architecture, and cognitive science. Graduated with honors.",
+      "gpaOrHonors": "Magna Cum Laude"
+    },
+    {
+      "id": "edu-2",
+      "degree": "Professional Certification in UX Architecture & Systems",
+      "institution": "Stanford Design School (d.school)",
+      "period": "2019",
+      "location": "Palo Alto, CA",
+      "description": "Specialized program on design thinking, enterprise design systems, accessibility compliance, and rapid interactive prototyping."
+    }
+  ],
+  "skills": [
+    {
+      "id": "skill-1",
+      "category": "Design",
+      "iconName": "edit_note",
+      "skills": [
+        "Experience Design",
+        "Prototyping",
+        "Design Systems",
+        "Typography",
+        "Micro-interactions",
+        "User Research",
+        "Figma"
+      ]
+    },
+    {
+      "id": "skill-2",
+      "category": "Development",
+      "iconName": "code",
+      "skills": [
+        "HTML/CSS",
+        "React.js",
+        "Next.js",
+        "Tailwind CSS",
+        "TypeScript",
+        "JavaScript (ES6+)",
+        "Node.js",
+        "MongoDB",
+        "Git/GitHub",
+        "Web Performance"
+      ]
+    },
+    {
+      "id": "skill-3",
+      "category": "Strategy & Ops",
+      "iconName": "psychology",
+      "skills": [
+        "Agile / Scrum",
+        "Design Tokens",
+        "Design Workshops",
+        "Accessibility (WCAG)",
+        "A/B Testing"
+      ]
+    }
+  ],
+  "profile": [
+    {
+      "name": "Dhruv Lad",
+      "title": "AI Engineer | MLOps",
+      "subtitle": "Manage your work and showcase your creations",
+      "avatarUrl": "https://lh3.googleusercontent.com/d/14REp0jKL4idzhG20Ne2pxDohEMscvDqc",
+      "bioParagraph1": "With over 8 years in the digital space, I've learned that great design isn't just about how things look—it's about how they function. My journey started in traditional graphic design before moving into the world of UI/UX and Frontend Engineering.",
+      "bioParagraph2": "I believe in building systems that are accessible, performant, and delightful to use. I thrive at the intersection of aesthetic precision and technical excellence, ensuring that every pixel serves a purpose in the user journey.",
+      "email": "dhruvlad.work@gmail.com",
+      "location": "India",
+      "github": "https://github.com/Dhruv593",
+      "linkedin": "https://in.linkedin.com/in/dhruv-lad",
+      "resumeUrl": "https://drive.google.com/file/d/1FXpZh9kocK2Uvxk71vfcYMUQNv5Wo2e4/view?usp=sharing",
+      "yearsExperience": 8,
+      "avatarPosition": "48% 2%",
+      "avatarFit": "cover"
+    }
+  ],
+  "messages": [
+    {
+      "id": "msg-1785915439829-gl2lz",
+      "name": "Dhruv Lad",
+      "email": "cocdhruv4444@gmail.com",
+      "subject": "Project Inquiry",
+      "message": "Hi, This is Dhruv Lad, As i notice your brand building AI solution for the enterprise solution.....",
+      "createdAt": "2026-08-05T07:37:19.829Z",
+      "read": true
+    }
+  ],
+  "categories": [
+    "Mobile & Web Design",
+    "Full Stack Development",
+    "AI & Machine Learning",
+    "UI/UX Design",
+    "Cloud Architecture",
+    "DevOps & Systems",
+    "Data Science & Analytics",
+    "Enterprise Solution",
+    "Identity Design",
+    "Website Design",
+    "Developer Tools",
+    "Mobile App"
+  ],
+  "blogCategories": [
+    "Engineering Architecture",
+    "UI/UX Design",
+    "Backend Development",
+    "Product Strategy",
+    "Tutorials & Insights"
+  ],
+  "mongoUri": "mongodb://Dhruv:Dhruv592003@ac-ev9dnvr-shard-00-00.3ynkqjc.mongodb.net:27017/?ssl=true&replicaSet=atlas-o2i8c1-shard-0&authSource=admin&appName=Cluster0"
+}

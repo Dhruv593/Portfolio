@@ -105,7 +105,7 @@ export default function App() {
           <main className="flex-1">
             <PublicPortfolioView
               projects={projects}
-              blogs={blogs}
+              // blogs={blogs}
               experience={experience}
               education={education}
               skills={skills}

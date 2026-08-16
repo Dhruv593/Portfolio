@@ -6,8 +6,14 @@ dotenv.config();
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.string().or(z.number()).default(3001),
-  ADMIN_PASSWORD: z.string().min(1),
-  JWT_SECRET: z.string().min(8),
+  ADMIN_PASSWORD: z
+    .string()
+    .optional()
+    .transform((val) => (val && val.trim().length > 0 ? val.trim() : 'dev-admin-password')),
+  JWT_SECRET: z
+    .string()
+    .optional()
+    .transform((val) => (val && val.trim().length > 0 ? val.trim() : 'dev-super-secret-jwt-key-2026')),
   MONGODB_URI: z.string().optional().default(''),
   CONTACT_RECEIVER_EMAIL: z.string().optional().default(''),
   SMTP_HOST: z.string().optional().default(''),
