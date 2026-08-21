@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { experienceService } from '../services/experience.service';
-import { sendSuccess, sendError } from '../utils/apiResponse';
+import { experienceService } from '../services/experience.service.js';
+import { sendSuccess, sendError } from '../utils/apiResponse.js';
 
 export class ExperienceController {
   async getExperience(req: Request, res: Response) {

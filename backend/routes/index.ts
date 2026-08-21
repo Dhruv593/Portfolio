@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import projectRoutes from './project.routes';
-import blogRoutes from './blog.routes';
-import experienceRoutes from './experience.routes';
-import educationRoutes from './education.routes';
-import skillsRoutes from './skills.routes';
-import profileRoutes from './profile.routes';
-import contactRoutes from './contact.routes';
-import adminRoutes from './admin.routes';
-import healthRoutes from './health.routes';
+import projectRoutes from './project.routes.js';
+import blogRoutes from './blog.routes.js';
+import experienceRoutes from './experience.routes.js';
+import educationRoutes from './education.routes.js';
+import skillsRoutes from './skills.routes.js';
+import profileRoutes from './profile.routes.js';
+import contactRoutes from './contact.routes.js';
+import adminRoutes from './admin.routes.js';
+import healthRoutes from './health.routes.js';
 
 const router = Router();
 

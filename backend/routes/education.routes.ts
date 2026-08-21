@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { educationController } from '../controllers/education.controller';
-import { authenticateAdmin } from '../middleware/auth.middleware';
-import { validateRequest } from '../middleware/validate.middleware';
-import { educationSchema } from '../utils/validators';
+import { educationController } from '../controllers/education.controller.js';
+import { authenticateAdmin } from '../middleware/auth.middleware.js';
+import { validateRequest } from '../middleware/validate.middleware.js';
+import { educationSchema } from '../utils/validators.js';
 
 const router = Router();
 

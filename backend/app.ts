@@ -1,13 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { env } from './config/env.config';
-import { dbService } from './db/mongodb';
-import { loadJsonStore } from './db/jsonStore';
-import { apiRateLimiter } from './middleware/rateLimiter';
-import { errorHandler } from './middleware/error.middleware';
-import apiRouter from './routes/index';
-import { logger } from './utils/logger';
+import { env } from './config/env.config.js';
+import { dbService } from './db/mongodb.js';
+import { loadJsonStore } from './db/jsonStore.js';
+import { apiRateLimiter } from './middleware/rateLimiter.js';
+import { errorHandler } from './middleware/error.middleware.js';
+import apiRouter from './routes/index.js';
+import { logger } from './utils/logger.js';
 
 // 1. Initialize local JSON DB Store cache (fallback)
 loadJsonStore();

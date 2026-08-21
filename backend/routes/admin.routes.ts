@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { adminController } from '../controllers/admin.controller';
-import { authenticateAdmin } from '../middleware/auth.middleware';
-import { validateRequest } from '../middleware/validate.middleware';
-import { adminLoginSchema, mongoConfigSchema } from '../utils/validators';
-import { authRateLimiter } from '../middleware/rateLimiter';
+import { adminController } from '../controllers/admin.controller.js';
+import { authenticateAdmin } from '../middleware/auth.middleware.js';
+import { validateRequest } from '../middleware/validate.middleware.js';
+import { adminLoginSchema, mongoConfigSchema } from '../utils/validators.js';
+import { authRateLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();
 

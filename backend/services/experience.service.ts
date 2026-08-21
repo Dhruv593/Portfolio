@@ -1,6 +1,6 @@
-import { dbStore, saveJsonStore } from '../db/jsonStore';
-import { dbService } from '../db/mongodb';
-import { ExperienceItemDoc } from '../models/types';
+import { dbStore, saveJsonStore } from '../db/jsonStore.js';
+import { dbService } from '../db/mongodb.js';
+import { ExperienceItemDoc } from '../models/types.js';
 
 export class ExperienceService {
   async getExperience(): Promise<ExperienceItemDoc[]> {

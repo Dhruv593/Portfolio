@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { projectService } from '../services/project.service';
-import { sendSuccess, sendError } from '../utils/apiResponse';
+import { projectService } from '../services/project.service.js';
+import { sendSuccess, sendError } from '../utils/apiResponse.js';
 
 export class ProjectController {
   async getCategories(req: Request, res: Response) {

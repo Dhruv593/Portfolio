@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { env } from '../config/env.config';
-import { sendError } from '../utils/apiResponse';
+import { env } from '../config/env.config.js';
+import { sendError } from '../utils/apiResponse.js';
 
 export interface AuthenticatedRequest extends Request {
   user?: {

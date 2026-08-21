@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { blogService } from '../services/blog.service';
-import { sendSuccess, sendError } from '../utils/apiResponse';
+import { blogService } from '../services/blog.service.js';
+import { sendSuccess, sendError } from '../utils/apiResponse.js';
 
 export class BlogController {
   async getCategories(req: Request, res: Response) {

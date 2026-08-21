@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { skillsService } from '../services/skills.service';
-import { sendSuccess, sendError } from '../utils/apiResponse';
+import { skillsService } from '../services/skills.service.js';
+import { sendSuccess, sendError } from '../utils/apiResponse.js';
 
 export class SkillsController {
   async getSkills(req: Request, res: Response) {

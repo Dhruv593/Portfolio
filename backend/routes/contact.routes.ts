@@ -4,8 +4,8 @@ import {
   getAllMessages,
   deleteMessage,
   toggleMessageReadStatus,
-} from '../controllers/contact.controller';
-import { authenticateAdmin } from '../middleware/auth.middleware';
+} from '../controllers/contact.controller.js';
+import { authenticateAdmin } from '../middleware/auth.middleware.js';
 
 const router = Router();
 

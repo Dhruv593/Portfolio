@@ -1,6 +1,6 @@
-import { dbStore, saveJsonStore } from '../db/jsonStore';
-import { dbService } from '../db/mongodb';
-import { ProjectDoc } from '../models/types';
+import { dbStore, saveJsonStore } from '../db/jsonStore.js';
+import { dbService } from '../db/mongodb.js';
+import { ProjectDoc } from '../models/types.js';
 
 export class ProjectService {
   async getAllProjects(query: { search?: string; status?: string; page?: number; limit?: number }) {

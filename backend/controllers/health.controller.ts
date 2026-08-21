@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { dbService } from '../db/mongodb';
-import { env } from '../config/env.config';
+import { dbService } from '../db/mongodb.js';
+import { env } from '../config/env.config.js';
 
 export class HealthController {
   async getHealth(req: Request, res: Response) {

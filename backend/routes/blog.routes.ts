@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { blogController } from '../controllers/blog.controller';
-import { authenticateAdmin } from '../middleware/auth.middleware';
-import { validateRequest } from '../middleware/validate.middleware';
-import { createBlogSchema, updateBlogSchema } from '../utils/validators';
+import { blogController } from '../controllers/blog.controller.js';
+import { authenticateAdmin } from '../middleware/auth.middleware.js';
+import { validateRequest } from '../middleware/validate.middleware.js';
+import { createBlogSchema, updateBlogSchema } from '../utils/validators.js';
 
 const router = Router();
 

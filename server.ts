@@ -1,10 +1,10 @@
 import path from 'path';
 import express from 'express';
 import { createServer as createViteServer } from 'vite';
-import app from './backend/app';
-import { env } from './backend/config/env.config';
-import { dbService } from './backend/db/mongodb';
-import { logger } from './backend/utils/logger';
+import app from './backend/app.js';
+import { env } from './backend/config/env.config.js';
+import { dbService } from './backend/db/mongodb.js';
+import { logger } from './backend/utils/logger.js';
 
 async function startServer() {
   // 1. Explicitly initialize Database Connection on boot

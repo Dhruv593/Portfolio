@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
-import { env } from '../config/env.config';
-import { logger } from '../utils/logger';
+import { env } from '../config/env.config.js';
+import { logger } from '../utils/logger.js';
 
 export interface EmailPayload {
   name: string;

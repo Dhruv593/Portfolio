@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { projectController } from '../controllers/project.controller';
-import { authenticateAdmin } from '../middleware/auth.middleware';
-import { validateRequest } from '../middleware/validate.middleware';
-import { createProjectSchema, updateProjectSchema } from '../utils/validators';
+import { projectController } from '../controllers/project.controller.js';
+import { authenticateAdmin } from '../middleware/auth.middleware.js';
+import { validateRequest } from '../middleware/validate.middleware.js';
+import { createProjectSchema, updateProjectSchema } from '../utils/validators.js';
 
 const router = Router();
 

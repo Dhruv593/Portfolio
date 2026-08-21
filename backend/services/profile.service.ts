@@ -1,7 +1,7 @@
-import { dbStore, saveJsonStore } from '../db/jsonStore';
-import { dbService } from '../db/mongodb';
-import { ProfileDataDoc } from '../models/types';
-import { initialProfile } from '../../src/data/initialData';
+import { dbStore, saveJsonStore } from '../db/jsonStore.js';
+import { dbService } from '../db/mongodb.js';
+import { ProfileDataDoc } from '../models/types.js';
+import { initialProfile } from '../../src/data/initialData.js';
 
 export class ProfileService {
   async getProfile(): Promise<ProfileDataDoc> {

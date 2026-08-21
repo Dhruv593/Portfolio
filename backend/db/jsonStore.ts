@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import { DBStore } from '../models/types';
-import { initialProjects, initialBlogs, initialExperience, initialEducation, initialSkills, initialProfile } from '../../src/data/initialData';
-import { logger } from '../utils/logger';
+import { DBStore } from '../models/types.js';
+import { initialProjects, initialBlogs, initialExperience, initialEducation, initialSkills, initialProfile } from '../../src/data/initialData.js';
+import { logger } from '../utils/logger.js';
 
 const DATA_FILE = path.join(process.cwd(), 'portfolio_db.json');
 

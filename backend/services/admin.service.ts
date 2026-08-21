@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
-import { env } from '../config/env.config';
-import { dbStore } from '../db/jsonStore';
+import { env } from '../config/env.config.js';
+import { dbStore } from '../db/jsonStore.js';
 
 export class AdminService {
   authenticate(password: string): { success: boolean; token?: string; error?: string } {

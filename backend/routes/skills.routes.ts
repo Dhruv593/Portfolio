@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { skillsController } from '../controllers/skills.controller';
-import { authenticateAdmin } from '../middleware/auth.middleware';
-import { validateRequest } from '../middleware/validate.middleware';
-import { skillCategorySchema } from '../utils/validators';
+import { skillsController } from '../controllers/skills.controller.js';
+import { authenticateAdmin } from '../middleware/auth.middleware.js';
+import { validateRequest } from '../middleware/validate.middleware.js';
+import { skillCategorySchema } from '../utils/validators.js';
 
 const router = Router();
 

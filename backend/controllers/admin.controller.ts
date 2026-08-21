@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { adminService } from '../services/admin.service';
-import { dbService } from '../db/mongodb';
-import { resetJsonStore } from '../db/jsonStore';
-import { sendSuccess, sendError } from '../utils/apiResponse';
+import { adminService } from '../services/admin.service.js';
+import { dbService } from '../db/mongodb.js';
+import { resetJsonStore } from '../db/jsonStore.js';
+import { sendSuccess, sendError } from '../utils/apiResponse.js';
 
 export class AdminController {
   async login(req: Request, res: Response) {

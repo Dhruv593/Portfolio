@@ -1,7 +1,7 @@
 import { MongoClient, Db } from 'mongodb';
-import { env } from '../config/env.config';
-import { logger } from '../utils/logger';
-import { dbStore, saveJsonStore } from './jsonStore';
+import { env } from '../config/env.config.js';
+import { logger } from '../utils/logger.js';
+import { dbStore, saveJsonStore } from './jsonStore.js';
 
 class DatabaseService {
   private static instance: DatabaseService;

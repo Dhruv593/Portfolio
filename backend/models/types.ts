@@ -8,7 +8,7 @@ import {
   MongoConfig,
   DashboardStats,
   ContactMessage,
-} from '../../src/types';
+} from '../../src/types.js';
 
 export type ProjectDoc = Project;
 export type BlogDoc = BlogPost;

@@ -1,6 +1,6 @@
-import { dbStore, saveJsonStore } from '../db/jsonStore';
-import { dbService } from '../db/mongodb';
-import { BlogDoc } from '../models/types';
+import { dbStore, saveJsonStore } from '../db/jsonStore.js';
+import { dbService } from '../db/mongodb.js';
+import { BlogDoc } from '../models/types.js';
 
 export class BlogService {
   async getAllBlogs(query: { search?: string; status?: string; page?: number; limit?: number }) {

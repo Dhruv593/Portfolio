@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { profileService } from '../services/profile.service';
-import { sendSuccess, sendError } from '../utils/apiResponse';
+import { profileService } from '../services/profile.service.js';
+import { sendSuccess, sendError } from '../utils/apiResponse.js';
 
 export class ProfileController {
   async getProfile(req: Request, res: Response) {

@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
-import { dbStore, saveJsonStore } from '../db/jsonStore';
-import { dbService } from '../db/mongodb';
-import { sendContactNotificationEmail } from '../services/emailService';
-import { logger } from '../utils/logger';
-import { ContactMessage } from '../../src/types';
+import { dbStore, saveJsonStore } from '../db/jsonStore.js';
+import { dbService } from '../db/mongodb.js';
+import { sendContactNotificationEmail } from '../services/emailService.js';
+import { logger } from '../utils/logger.js';
+import { ContactMessage } from '../../src/types.js';
 
 const contactSchema = z.object({
   name: z.string().min(1, 'Name is required'),

@@ -1,6 +1,6 @@
-import { dbStore, saveJsonStore } from '../db/jsonStore';
-import { dbService } from '../db/mongodb';
-import { EducationItemDoc } from '../models/types';
+import { dbStore, saveJsonStore } from '../db/jsonStore.js';
+import { dbService } from '../db/mongodb.js';
+import { EducationItemDoc } from '../models/types.js';
 
 export class EducationService {
   async getEducation(): Promise<EducationItemDoc[]> {

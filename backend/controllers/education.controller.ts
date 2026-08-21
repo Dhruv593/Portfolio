@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { educationService } from '../services/education.service';
-import { sendSuccess, sendError } from '../utils/apiResponse';
+import { educationService } from '../services/education.service.js';
+import { sendSuccess, sendError } from '../utils/apiResponse.js';
 
 export class EducationController {
   async getEducation(req: Request, res: Response) {
