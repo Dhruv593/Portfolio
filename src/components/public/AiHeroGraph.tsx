@@ -390,17 +390,6 @@ export const AiHeroGraph: React.FC<{ className?: string }> = ({ className = '' }
         const pulseScale = 1 + Math.sin(node.pulse) * 0.22;
         const currentRadius = node.radius * pulseScale;
 
-        // Outer Glow Halo
-        const glowRadius = currentRadius * (node.isCenter ? 5 : 3.6);
-        const glowGrad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, glowRadius);
-        glowGrad.addColorStop(0, node.glowColor);
-        glowGrad.addColorStop(1, 'transparent');
-
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, glowRadius, 0, Math.PI * 2);
-        ctx.fillStyle = glowGrad;
-        ctx.fill();
-
         // Core Node
         ctx.beginPath();
         ctx.arc(node.x, node.y, currentRadius, 0, Math.PI * 2);

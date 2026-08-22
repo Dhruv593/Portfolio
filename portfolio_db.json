@@ -178,11 +178,12 @@
     },
     {
       "id": "edu-2",
-      "degree": "Professional Certification in UX Architecture & Systems",
-      "institution": "Stanford Design School (d.school)",
-      "period": "2019",
-      "location": "Palo Alto, CA",
-      "description": "Specialized program on design thinking, enterprise design systems, accessibility compliance, and rapid interactive prototyping."
+      "degree": "M.tech Data Science",
+      "institution": "Pandit Deendayal Energy University",
+      "period": "2025-2027",
+      "location": "Gandhinagar, India",
+      "description": "Specialized program on design thinking, enterprise design systems, accessibility compliance, and rapid interactive prototyping.",
+      "gpaOrHonors": "9"
     }
   ],
   "skills": [
@@ -257,6 +258,51 @@
       "message": "Hi, This is Dhruv Lad, As i notice your brand building AI solution for the enterprise solution.....",
       "createdAt": "2026-08-05T07:37:19.829Z",
       "read": true
+    },
+    {
+      "id": "msg-1787329502551-5nvtg",
+      "name": "Dhruv",
+      "email": "cocdhruv@gmail.com",
+      "subject": "Project Inquiry",
+      "message": "Hello",
+      "createdAt": "2026-08-21T16:25:02.551Z",
+      "read": false
+    },
+    {
+      "id": "msg-1787329568733-r2dd8",
+      "name": "Dhruv",
+      "email": "cocdhruv@gmail.com",
+      "subject": "Project Inquiry",
+      "message": "Hi,",
+      "createdAt": "2026-08-21T16:26:08.733Z",
+      "read": false
+    },
+    {
+      "id": "msg-1787329692062-hwahg",
+      "name": "Dhruv",
+      "email": "cocdhruv@gmail.com",
+      "subject": "Project Inquiry",
+      "message": "Hello",
+      "createdAt": "2026-08-21T16:28:12.062Z",
+      "read": false
+    },
+    {
+      "id": "msg-1787331138777-jk4me",
+      "name": "Dhruv",
+      "email": "cocdhruv@gmail.com",
+      "subject": "Project Inquiry",
+      "message": "Hello there",
+      "createdAt": "2026-08-21T16:52:18.777Z",
+      "read": false
+    },
+    {
+      "id": "msg-1787331605080-37wwg",
+      "name": "Dhruv",
+      "email": "dhruvlad4444@gmail.com",
+      "subject": "Project Inquiry",
+      "message": "Hi there",
+      "createdAt": "2026-08-21T17:00:05.080Z",
+      "read": false
     }
   ],
   "categories": [
