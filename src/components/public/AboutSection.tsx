@@ -18,13 +18,13 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
           </h2>
         </div>
 
-        {/* About Main Content Card Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left Column: Avatar & Quick Info Blue Card (Matching Contact Card Style) */}
-          <div className="lg:col-span-5 bg-slate-50 text-[#151c27] rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
+        {/* Profile and biography */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Profile details */}
+          <div className="lg:col-span-5 rounded-2xl border border-slate-300 bg-slate-50 p-5 sm:p-8 space-y-5 shadow-sm text-[#151c27]">
 
-            <div className="flex flex-col sm:flex-row items-center gap-5 relative z-10">
-              <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden bg-slate-200 shrink-0">
+            <div className="flex items-center gap-4 sm:gap-5">
+              <div className="relative h-20 w-20 sm:h-28 sm:w-28 rounded-2xl overflow-hidden bg-slate-200 shrink-0">
                 <ProfileAvatar
                   profile={profile}
                   className="w-full h-full"
@@ -38,7 +38,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
                 />
               </div>
 
-              <div className="space-y-1 text-center sm:text-left">
+              <div className="min-w-0 space-y-1 text-left">
                 <h3 className="text-xl sm:text-2xl font-semibold text-[#151c27]">
                   {profile.name}
                 </h3>
@@ -46,7 +46,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
                   {profile.title}
                 </p>
                 {profile.location && (
-                  <div className="flex items-center justify-center sm:justify-start gap-1.5 text-sm text-slate-600 pt-1">
+                  <div className="flex items-center gap-1.5 text-sm text-slate-600 pt-1">
                     <MapPin className="w-4 h-4" />
                     <span>{profile.location}</span>
                   </div>
@@ -55,7 +55,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
             </div>
 
             {/* Quick Contact & Links */}
-            <div className="space-y-3 pt-4 border-t border-slate-200 relative z-10">
+            <div className="space-y-3 pt-4 border-t border-slate-200">
               {profile.email && (
                 <div className="flex items-center gap-2.5 text-sm text-slate-700 min-w-0">
                   <Mail className="w-4 h-4 text-slate-500 shrink-0" />
@@ -63,13 +63,13 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
                 </div>
               )}
 
-              <div className="flex flex-wrap gap-2 pt-2">
+              <div className="grid grid-cols-3 gap-1 pt-1">
                 {profile.github && (
                   <a
                     href={profile.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-11 items-center gap-1.5 px-3 hover:bg-slate-200 rounded-xl text-sm font-medium text-slate-700 transition-colors"
+                    className="inline-flex min-h-11 items-center justify-center gap-1 rounded-lg px-1 hover:bg-slate-100 text-sm font-medium text-slate-700 transition-colors"
                   >
                     <Github className="w-3.5 h-3.5" />
                     <span>GitHub</span>
@@ -80,7 +80,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
                     href={profile.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-11 items-center gap-1.5 px-3 hover:bg-slate-200 rounded-xl text-sm font-medium text-slate-700 transition-colors"
+                    className="inline-flex min-h-11 items-center justify-center gap-1 rounded-lg px-1 hover:bg-slate-100 text-sm font-medium text-slate-700 transition-colors"
                   >
                     <Linkedin className="w-3.5 h-3.5" />
                     <span>LinkedIn</span>
@@ -91,7 +91,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
                     href={profile.resumeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-11 items-center gap-1.5 px-3 hover:bg-slate-200 rounded-xl text-sm font-medium text-slate-700 transition-colors"
+                    className="inline-flex min-h-11 items-center justify-center gap-1 rounded-lg px-1 hover:bg-slate-100 text-sm font-medium text-slate-700 transition-colors"
                   >
                     <FileText className="w-3.5 h-3.5" />
                     <span>Resume</span>

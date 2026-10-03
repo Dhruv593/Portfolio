@@ -40,8 +40,93 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-10 items-start">
+        {/* Direct contact option appears before the form on narrow screens. */}
+        <div className="lg:col-start-1 lg:row-start-1 lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-5 sm:p-7 shadow-sm space-y-4">
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold text-[#151c27]">Contact Information</h3>
+            <p className="text-slate-600 text-sm leading-relaxed">
+              Fill out the inquiry form or reach out directly via email or social links.
+            </p>
+          </div>
+
+          <div className="space-y-4 text-sm">
+            {profile.email && (
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <Mail className="w-5 h-5 text-slate-500 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-sm text-slate-500">Email</p>
+                    <a href={`mailto:${profile.email}`} className="font-medium text-sm text-[#0058be] break-all hover:underline">{profile.email}</a>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleCopyEmail}
+                  className="w-11 h-11 flex items-center justify-center hover:bg-slate-200 rounded-xl transition-colors shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#0058be]"
+                  aria-label={copied ? 'Email copied' : 'Copy email'}
+                >
+                  {copied ? <Check className="w-4 h-4 text-emerald-700" /> : <Copy className="w-4 h-4 text-slate-600" />}
+                </button>
+              </div>
+            )}
+
+            {profile.location && (
+              <div className="flex items-center gap-3">
+                <MapPin className="w-5 h-5 text-slate-500 shrink-0" />
+                <div>
+                  <p className="text-sm text-slate-500">Location</p>
+                  <p className="font-medium text-sm text-slate-800">{profile.location}</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Social Links */}
+          <div className="pt-4 border-t border-slate-200 flex flex-wrap items-center gap-1">
+            {profile.github && (
+              <a
+                href={profile.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="min-h-11 rounded-lg px-2 hover:bg-slate-100 flex items-center justify-center gap-1.5 text-sm font-medium text-slate-700 transition-colors"
+                aria-label="GitHub"
+              >
+                <Github className="w-4 h-4" />
+                <span>GitHub</span>
+              </a>
+            )}
+
+            {profile.linkedin && (
+              <a
+                href={profile.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="min-h-11 rounded-lg px-2 hover:bg-slate-100 flex items-center justify-center gap-1.5 text-sm font-medium text-slate-700 transition-colors"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="w-4 h-4" />
+                <span>LinkedIn</span>
+              </a>
+            )}
+
+            {profile.resumeUrl && (
+              <a
+                href={profile.resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="min-h-11 rounded-lg px-2 hover:bg-slate-100 flex items-center justify-center gap-1.5 text-sm font-medium text-slate-700 transition-colors"
+                aria-label="Resume"
+              >
+                <FileText className="w-4 h-4" />
+                <span>Resume</span>
+              </a>
+            )}
+          </div>
+        </div>
+
         {/* Right Side: Contact Form */}
-        <div className="lg:col-start-3 lg:row-start-1 lg:col-span-3 rounded-2xl bg-white p-0 sm:p-7 sm:border sm:border-slate-200">
+        <div className="lg:col-start-3 lg:row-start-1 lg:col-span-3 rounded-2xl border border-slate-200 bg-white p-5 sm:p-7 shadow-sm">
           {contactSuccess ? (
             <div className="text-center py-12 space-y-4">
               <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
@@ -119,88 +204,6 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile }) => {
             </form>
           )}
         </div>
-        {/* Contact details follow the form on narrow screens. */}
-        <div className="lg:col-start-1 lg:row-start-1 lg:col-span-2 rounded-2xl bg-slate-50 p-5 sm:p-7 space-y-5">
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-[#151c27]">Contact Information</h3>
-            <p className="text-slate-600 text-sm leading-relaxed">
-              Fill out the inquiry form or reach out directly via email or social links.
-            </p>
-          </div>
-
-          <div className="space-y-4 text-sm">
-            {profile.email && (
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <Mail className="w-5 h-5 text-slate-500 shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-sm text-slate-500">Email</p>
-                    <p className="font-medium text-sm text-slate-800 break-all">{profile.email}</p>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleCopyEmail}
-                  className="w-11 h-11 flex items-center justify-center hover:bg-slate-200 rounded-xl transition-colors shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#0058be]"
-                  aria-label={copied ? 'Email copied' : 'Copy email'}
-                >
-                  {copied ? <Check className="w-4 h-4 text-emerald-700" /> : <Copy className="w-4 h-4 text-slate-600" />}
-                </button>
-              </div>
-            )}
-
-            {profile.location && (
-              <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-slate-500 shrink-0" />
-                <div>
-                  <p className="text-sm text-slate-500">Location</p>
-                  <p className="font-medium text-sm text-slate-800">{profile.location}</p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Social Links */}
-          <div className="pt-4 border-t border-slate-200 flex items-center gap-2">
-            {profile.github && (
-              <a
-                href={profile.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-11 h-11 rounded-xl hover:bg-slate-200 flex items-center justify-center text-slate-700 transition-colors"
-                aria-label="GitHub"
-              >
-                <Github className="w-4 h-4" />
-              </a>
-            )}
-
-            {profile.linkedin && (
-              <a
-                href={profile.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-11 h-11 rounded-xl hover:bg-slate-200 flex items-center justify-center text-slate-700 transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="w-4 h-4" />
-              </a>
-            )}
-
-            {profile.resumeUrl && (
-              <a
-                href={profile.resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-11 h-11 rounded-xl hover:bg-slate-200 flex items-center justify-center text-slate-700 transition-colors"
-                aria-label="Resume"
-              >
-                <FileText className="w-4 h-4" />
-              </a>
-            )}
-          </div>
-        </div>
-
       </div>
     </section>
   );

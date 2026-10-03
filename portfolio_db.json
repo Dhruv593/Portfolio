@@ -1,6 +1,27 @@
 {
   "projects": [
     {
+      "id": "proj-1791011854700",
+      "name": "Tatparya",
+      "category": "AI & Data Analytics",
+      "status": "Published",
+      "dateAdded": "Oct 03, 2026",
+      "image": "https://res.cloudinary.com/dwvmd2gwl/image/upload/f_auto/q_auto/w_1600,c_limit/v1791011827/portfolio/nxzju0gfzddhuwyknl3m.png",
+      "description": "A business analytics workspace that turns uploaded data and plain-language questions into clear findings, charts, recommendations, and shareable reports.",
+      "longDescription": "Tatparya helps users move from a raw business file to a decision they can explain. Users can upload CSV, Excel, JSON, or Parquet files, review columns and data quality, and ask questions about performance, trends, customers, products, or regions in everyday language. The workspace presents answers alongside supporting visualizations, lets users investigate follow-up questions, and brings findings and recommendations into a downloadable PDF report.",
+      "githubUrl": "",
+      "liveUrl": "https://insight-forge-frontend-inky.vercel.app/",
+      "tags": [
+        "AI ANALYTICS",
+        "BUSINESS INTELLIGENCE",
+        "NATURAL LANGUAGE QUERIES",
+        "DATA VISUALIZATION",
+        "REPORTING"
+      ],
+      "featured": true,
+      "displayOrder": 0
+    },
+    {
       "id": "proj-5",
       "name": "DocuChat: Retrieval-Augmented AI System",
       "category": "Generative AI",
@@ -19,27 +40,57 @@
         "REACT",
         "DOCKER"
       ],
-      "featured": true
+      "featured": true,
+      "displayOrder": 1
     },
     {
-      "id": "proj-1791011854700",
-      "name": "Tatparya",
+      "id": "proj-cab462cc-0b0a-41ed-8ead-7d6638cc9466",
+      "name": "OcuScan AI",
+      "category": "AI & Machine Learning",
+      "status": "Published",
+      "dateAdded": "Oct 03, 2026",
+      "displayOrder": 2,
+      "image": "https://res.cloudinary.com/dwvmd2gwl/image/upload/f_auto/q_auto/w_1600,c_limit/v1791049059/portfolio/f60rlwmrjpao4kr2epfs.png",
+      "imagePosition": "21% 43%",
+      "imageFit": "cover",
+      "imageScale": 1,
+      "description": "A research prototype for dry-eye assessment combining image segmentation with clinical-parameter analysis.",
+      "longDescription": "Combined YOLOv8 segmentation with a Random Forest model using more than 20 clinical parameters. A probability-fusion approach improved diagnostic reliability by 15–20% in project validation. The Dockerized application processed more than 150 test cases and uses React and FastAPI for its interface and backend.",
+      "githubUrl": "https://github.com/Dhruv593/Dry-Eye-Prediction",
+      "liveUrl": "",
+      "tags": [
+        "COMPUTER VISION",
+        "YOLOV8",
+        "RANDOM FOREST",
+        "REACT",
+        "FASTAPI",
+        "DOCKER"
+      ],
+      "featured": false
+    },
+    {
+      "id": "proj-5b5c4c3b-7c8b-4c86-9283-0c4dcbec5884",
+      "name": "LLM-Powered Uber Trip Analytics",
       "category": "AI & Data Analytics",
       "status": "Published",
       "dateAdded": "Oct 03, 2026",
-      "image": "https://res.cloudinary.com/dwvmd2gwl/image/upload/f_auto/q_auto/w_1600,c_limit/v1791011827/portfolio/nxzju0gfzddhuwyknl3m.png",
-      "description": "A business analytics workspace that turns uploaded data and plain-language questions into clear findings, charts, recommendations, and shareable reports.",
-      "longDescription": "Tatparya helps users move from a raw business file to a decision they can explain. Users can upload CSV, Excel, JSON, or Parquet files, review columns and data quality, and ask questions about performance, trends, customers, products, or regions in everyday language. The workspace presents answers alongside supporting visualizations, lets users investigate follow-up questions, and brings findings and recommendations into a downloadable PDF report.",
-      "githubUrl": "",
-      "liveUrl": "https://insight-forge-frontend-inky.vercel.app/",
+      "displayOrder": 3,
+      "image": "https://res.cloudinary.com/dwvmd2gwl/image/upload/f_auto/q_auto/w_1600,c_limit/v1791049155/portfolio/loq8kltobzsxmz1qk7ai.png",
+      "imagePosition": "50% 50%",
+      "imageFit": "cover",
+      "imageScale": 1,
+      "description": "An analytics application for exploring Uber trip patterns through dashboards, natural-language questions, and generated reports.",
+      "longDescription": "Analyzed more than 100,000 trip records to explore demand patterns, forecasting, and revenue trends. Built interactive dashboards with Streamlit and Power BI, and used Llama-3.1-8B to support natural-language queries and automated analytical reports.",
+      "githubUrl": "https://github.com/Dhruv593/Uber_Trip_Analysis",
+      "liveUrl": "",
       "tags": [
-        "AI ANALYTICS",
-        "BUSINESS INTELLIGENCE",
-        "NATURAL LANGUAGE QUERIES",
-        "DATA VISUALIZATION",
-        "REPORTING"
+        "PYTHON",
+        "STREAMLIT",
+        "LLAMA-3.1",
+        "POWER BI",
+        "DATA ANALYTICS"
       ],
-      "featured": true
+      "featured": false
     }
   ],
   "blogs": [
@@ -151,7 +202,7 @@
   "profile": [
     {
       "name": "Dhruv Lad",
-      "title": "AI Engineer | Data Scientist",
+      "title": "AI Engineer | MLOps",
       "subtitle": "Manage your work and showcase your creations",
       "avatarUrl": "https://res.cloudinary.com/dwvmd2gwl/image/upload/f_auto/q_auto/w_512,c_limit/v1790946279/portfolio/yale7wzpfdwhadgb7ewp.jpg",
       "bioParagraph1": "I’m an AI engineer and M.Tech Data Science student focused on turning complex data into useful products. My work spans retrieval-augmented generation, language model workflows, computer vision, analytics, and full-stack development. I enjoy building systems that make information easier to explore and decisions easier to explain.",

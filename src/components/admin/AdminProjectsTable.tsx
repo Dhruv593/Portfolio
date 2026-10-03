@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react';
 import { DashboardStats, Project } from '../../types';
 import { normalizeImageUrl } from '../../utils/imageUtils';
 
@@ -43,19 +43,22 @@ export const AdminProjectsTable: React.FC<AdminProjectsTableProps> = ({
 
   const statusButton = (project: Project) => <button type="button" onClick={() => onToggleStatus(project)} aria-label={`Change ${project.name} from ${project.status} to ${project.status === 'Published' ? 'Draft' : 'Published'}`} className={`min-h-11 rounded-lg px-3 text-sm font-medium ${project.status === 'Published' ? 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>{project.status}</button>;
 
-  const positionControl = (project: Project, index: number) => <label className="inline-flex items-center gap-2 text-sm text-slate-600">
-    <span className="sr-only">Position for {project.name}</span>
-    <select aria-label={`Position for ${project.name}`} value={(currentPage - 1) * 10 + index + 1} onChange={(event) => onSetPosition(project, Number(event.target.value))} disabled={filtered || reordering} title={filtered ? 'Clear filters to change project order' : 'Change project position'} className="min-h-11 rounded-lg border border-slate-300 bg-white px-2 text-sm text-slate-800 disabled:opacity-50">
-      {Array.from({ length: totalProjectsCount }, (_, position) => <option key={position} value={position + 1}>{position + 1}</option>)}
-    </select>
-  </label>;
+  const positionControl = (project: Project, index: number) => {
+    const position = (currentPage - 1) * 10 + index + 1;
+    const unavailable = filtered || reordering;
+    return <div className="inline-flex items-center gap-1" role="group" aria-label={`Order ${project.name}`}>
+      <button type="button" onClick={() => onSetPosition(project, position - 1)} disabled={unavailable || position === 1} aria-label={`Move ${project.name} up`} title={filtered ? 'Clear filters to change project order' : 'Move up'} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-[#0058be] disabled:cursor-not-allowed disabled:opacity-35"><ArrowUp className="h-4 w-4" aria-hidden="true" /></button>
+      <span className="min-w-7 text-center text-sm font-medium tabular-nums text-slate-600" aria-label={`Position ${position}`}>{position}</span>
+      <button type="button" onClick={() => onSetPosition(project, position + 1)} disabled={unavailable || position >= totalProjectsCount} aria-label={`Move ${project.name} down`} title={filtered ? 'Clear filters to change project order' : 'Move down'} className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-[#0058be] disabled:cursor-not-allowed disabled:opacity-35"><ArrowDown className="h-4 w-4" aria-hidden="true" /></button>
+    </div>;
+  };
 
   return <div className="min-w-0 space-y-5">
     <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div><h1 className="text-2xl font-semibold tracking-tight text-slate-900">Projects</h1><p className="mt-1 text-sm text-slate-600">{stats.publishedCount} published · {stats.draftCount} drafts</p></div>
       <button type="button" onClick={onAddNewProject} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#0058be] px-4 text-sm font-semibold text-white hover:bg-[#004a9f]"><Plus className="h-4 w-4" /> Add project</button>
     </header>
-    <p className="text-sm text-slate-600">Set a position to arrange projects. The first three published projects appear on the homepage.</p>
+    <p className="text-sm text-slate-600">Use the arrows to arrange projects. The first three published projects appear on the homepage.</p>
     <div className="flex flex-col gap-3 sm:flex-row">
       <label className="relative min-w-0 flex-1"><span className="sr-only">Search projects</span><Search className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-slate-500" /><input type="search" value={searchQuery} onChange={(event) => { setSearchQuery(event.target.value); setCurrentPage(1); }} placeholder="Search projects" className="min-h-11 w-full rounded-lg border border-slate-300 bg-white pl-10 pr-3 text-sm text-slate-900 focus:outline-2 focus:outline-[#0058be]" /></label>
       <label className="flex items-center gap-2 text-sm text-slate-700"><span>Status</span><select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setCurrentPage(1); }} className="min-h-11 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-sm sm:flex-none"><option value="All">All</option><option value="Published">Published</option><option value="Draft">Draft</option></select></label>
