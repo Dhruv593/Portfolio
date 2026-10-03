@@ -7,8 +7,11 @@ import { dbService } from './backend/db/mongodb.js';
 import { logger } from './backend/utils/logger.js';
 
 async function startServer() {
-  // 1. Explicitly initialize Database Connection on boot
-  await dbService.connect();
+  // Start the connection while the frontend server initializes. API requests
+  // still wait for it through the shared in-flight connection promise.
+  void dbService.connect().catch((err) => {
+    logger.error('Database connection error on boot', err);
+  });
 
   // 2. Serve Frontend via Vite Middleware in Development or Static Assets in Production
   if (!env.IS_PROD) {
@@ -19,6 +22,7 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
+    app.use('/assets', express.static(path.join(distPath, 'assets'), { maxAge: '1y', immutable: true }));
     app.use(express.static(distPath));
     app.get('*', (_req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));

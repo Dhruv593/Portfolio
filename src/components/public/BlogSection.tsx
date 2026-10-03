@@ -21,9 +21,6 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogs = [], profile })
       <div className="max-w-6xl mx-auto space-y-12">
         {/* Header */}
         <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-[#0058be] text-xs font-bold uppercase tracking-wider">
-            Articles & Publications
-          </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#151c27]">
             Engineering Blog & Thoughts
           </h2>
@@ -43,6 +40,8 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogs = [], profile })
                     <img
                       src={blog.image}
                       alt={blog.title}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full transition-transform duration-500"
                       style={{
                         objectPosition: blog.imagePosition || '50% 50%',

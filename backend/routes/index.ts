@@ -8,6 +8,7 @@ import profileRoutes from './profile.routes.js';
 import contactRoutes from './contact.routes.js';
 import adminRoutes from './admin.routes.js';
 import healthRoutes from './health.routes.js';
+import mediaRoutes from './media.routes.js';
 
 const router = Router();
 
@@ -21,5 +22,6 @@ router.use('/contact', contactRoutes);
 router.use('/messages', contactRoutes);
 router.use('/admin', adminRoutes);
 router.use('/health', healthRoutes);
+router.use('/media', mediaRoutes);
 
 export default router;

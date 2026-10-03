@@ -18,8 +18,10 @@ import {
   RefreshCw,
   Heart
 } from 'lucide-react';
-import { Project, BlogPost, ExperienceItem, EducationItem, SkillCategory, ProfileData, DashboardStats, MongoConfig } from '../../types';
+import { Project, BlogPost, ExperienceItem, EducationItem, SkillCategory, ProfileData, DashboardStats, MongoConfig, PortfolioSectionId } from '../../types';
 import { AdminTab } from './AdminSidebar';
+import { ProfileAvatar } from '../ProfileAvatar';
+import { isSectionVisible, portfolioSections } from '../../utils/sectionVisibility';
 
 interface AdminOverviewProps {
   profile: ProfileData;
@@ -34,6 +36,8 @@ interface AdminOverviewProps {
   onAddNewProject: () => void;
   onAddBlog: () => void;
   onOpenMongoModal: () => void;
+  onUpdateSectionVisibility: (section: PortfolioSectionId) => void;
+  visibilitySaving: boolean;
 }
 
 export const AdminOverview: React.FC<AdminOverviewProps> = ({
@@ -49,6 +53,8 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
   onAddNewProject,
   onAddBlog,
   onOpenMongoModal,
+  onUpdateSectionVisibility,
+  visibilitySaving,
 }) => {
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [recentMessage, setRecentMessage] = useState<{ name: string; subject: string; date: string } | null>(null);
@@ -88,18 +94,12 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
       {/* 1. Welcome Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200">
         <div className="flex items-center gap-4">
-          {profile.avatarUrl ? (
-            <img 
-              src={profile.avatarUrl} 
-              alt={profile.name} 
-              className="w-14 h-14 rounded-2xl object-cover ring-4 ring-blue-500/10 shadow-sm"
-              style={{ objectPosition: profile.avatarPosition || '50% 50%' }}
-            />
-          ) : (
-            <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-xl shadow-sm">
-              {profile.name ? profile.name.charAt(0) : 'A'}
-            </div>
-          )}
+          <ProfileAvatar
+            profile={profile}
+            className="w-14 h-14 rounded-2xl object-cover ring-4 ring-blue-500/10 shadow-sm"
+            fallbackClassName="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-xl shadow-sm"
+            style={{ objectPosition: profile.avatarPosition || '50% 50%' }}
+          />
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[#151c27] tracking-tight">
               Welcome back, {profile.name || 'Admin'}
@@ -119,6 +119,32 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({
           <span>Edit Profile Settings</span>
         </button>
       </div>
+
+      <section className="bg-white rounded-2xl border border-slate-200/80 shadow-3xs p-5 sm:p-6" aria-labelledby="section-visibility-heading">
+        <h2 id="section-visibility-heading" className="text-lg font-bold text-[#151c27]">Website sections</h2>
+        <p className="text-xs text-slate-500 mt-1">Choose which sections appear on the public website. Changes save immediately.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-5">
+          {portfolioSections.map(({ id, label }) => {
+            const visible = isSectionVisible(profile, id);
+            return (
+              <div key={id} className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <span className="text-sm font-semibold text-slate-700">{label}</span>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-label={`Show ${label} section`}
+                  aria-checked={visible}
+                  onClick={() => onUpdateSectionVisibility(id)}
+                  disabled={visibilitySaving}
+                  className={`relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-50 ${visible ? 'bg-[#0058be]' : 'bg-slate-300'}`}
+                >
+                  <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${visible ? 'translate-x-5' : ''}`} />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </section>
 
       {/* 2. Visual Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

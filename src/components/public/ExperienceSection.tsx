@@ -11,9 +11,6 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experience
     <section id="experience" className="pt-10 sm:pt-12 pb-20 sm:pb-24 bg-white border-y border-slate-200/80 px-6 sm:px-8 lg:px-10 scroll-mt-20">
       <div className="max-w-6xl mx-auto space-y-12">
         <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 text-[#0058be] text-xs font-bold uppercase tracking-wider">
-            Career Trajectory
-          </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#151c27]">
             Professional Experience
           </h2>

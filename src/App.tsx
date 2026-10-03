@@ -1,25 +1,26 @@
 import React from 'react';
-import { AdminSidebar } from './components/admin/AdminSidebar';
-import { AdminTopBar } from './components/admin/AdminTopBar';
-import { AdminOverview } from './components/admin/AdminOverview';
-import { AdminProjectsTable } from './components/admin/AdminProjectsTable';
-import { AdminBlogsTable } from './components/admin/AdminBlogsTable';
-import { ProjectModal } from './components/admin/modals/ProjectModal';
-import { BlogModal } from './components/admin/modals/BlogModal';
-import { ExperienceManager } from './components/admin/ExperienceManager';
-import { EducationManager } from './components/admin/EducationManager';
-import { SkillsManager } from './components/admin/SkillsManager';
-import { ProfileManager } from './components/admin/ProfileManager';
-import { AdminMessagesTable } from './components/admin/AdminMessagesTable';
-import { MongoDbModal } from './components/admin/modals/MongoDbModal';
-import { PublishModal } from './components/admin/modals/PublishModal';
-import { AdminAuthModal } from './components/admin/modals/AdminAuthModal';
 import { PublicPortfolioNav } from './components/PublicPortfolioNav';
 import { PublicPortfolioView } from './components/PublicPortfolioView';
 import { Toast } from './components/Toast';
 import { useToast } from './hooks/useToast';
 import { useAuth } from './hooks/useAuth';
 import { usePortfolioData } from './hooks/usePortfolioData';
+
+const AdminSidebar = React.lazy(() => import('./components/admin/AdminSidebar').then((m) => ({ default: m.AdminSidebar })));
+const AdminTopBar = React.lazy(() => import('./components/admin/AdminTopBar').then((m) => ({ default: m.AdminTopBar })));
+const AdminOverview = React.lazy(() => import('./components/admin/AdminOverview').then((m) => ({ default: m.AdminOverview })));
+const AdminProjectsTable = React.lazy(() => import('./components/admin/AdminProjectsTable').then((m) => ({ default: m.AdminProjectsTable })));
+const AdminBlogsTable = React.lazy(() => import('./components/admin/AdminBlogsTable').then((m) => ({ default: m.AdminBlogsTable })));
+const ExperienceManager = React.lazy(() => import('./components/admin/ExperienceManager').then((m) => ({ default: m.ExperienceManager })));
+const EducationManager = React.lazy(() => import('./components/admin/EducationManager').then((m) => ({ default: m.EducationManager })));
+const SkillsManager = React.lazy(() => import('./components/admin/SkillsManager').then((m) => ({ default: m.SkillsManager })));
+const ProfileManager = React.lazy(() => import('./components/admin/ProfileManager').then((m) => ({ default: m.ProfileManager })));
+const AdminMessagesTable = React.lazy(() => import('./components/admin/AdminMessagesTable').then((m) => ({ default: m.AdminMessagesTable })));
+const ProjectModal = React.lazy(() => import('./components/admin/modals/ProjectModal').then((m) => ({ default: m.ProjectModal })));
+const BlogModal = React.lazy(() => import('./components/admin/modals/BlogModal').then((m) => ({ default: m.BlogModal })));
+const MongoDbModal = React.lazy(() => import('./components/admin/modals/MongoDbModal').then((m) => ({ default: m.MongoDbModal })));
+const PublishModal = React.lazy(() => import('./components/admin/modals/PublishModal').then((m) => ({ default: m.PublishModal })));
+const AdminAuthModal = React.lazy(() => import('./components/admin/modals/AdminAuthModal').then((m) => ({ default: m.AdminAuthModal })));
 
 export default function App() {
   const { toast, showToast, hideToast } = useToast();
@@ -89,9 +90,11 @@ export default function App() {
     handleUpdateSkillCategory,
     handleDeleteSkillCategory,
     handleUpdateProfile,
+    handleUpdateSectionVisibility,
+    visibilitySaving,
     handleConnectMongo,
     handleResetSeedData,
-  } = usePortfolioData(showToast);
+  } = usePortfolioData(showToast, viewMode);
 
   return (
     <div className="min-h-screen bg-[#f9f9ff] text-[#151c27]">
@@ -105,7 +108,7 @@ export default function App() {
           <main className="flex-1">
             <PublicPortfolioView
               projects={projects}
-              // blogs={blogs}
+              blogs={blogs}
               experience={experience}
               education={education}
               skills={skills}
@@ -116,6 +119,7 @@ export default function App() {
         </div>
       ) : (
         // --- ADMIN CONSOLE VIEW ---
+        <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading admin…</div>}>
         <div className="min-h-screen flex flex-col md:flex-row">
           {/* Admin Sidebar */}
           <AdminSidebar
@@ -156,6 +160,8 @@ export default function App() {
                   onAddNewProject={handleOpenAddProject}
                   onAddBlog={handleOpenAddBlog}
                   onOpenMongoModal={() => setIsMongoModalOpen(true)}
+                  onUpdateSectionVisibility={handleUpdateSectionVisibility}
+                  visibilitySaving={visibilitySaving}
                 />
               )}
 
@@ -235,15 +241,20 @@ export default function App() {
             </footer>
           </div>
         </div>
+        </React.Suspense>
       )}
 
       {/* Modals */}
+      <React.Suspense fallback={null}>
+      {isAdminAuthModalOpen && (
       <AdminAuthModal
         isOpen={isAdminAuthModalOpen}
         onSuccess={handleAuthSuccess}
         onCancel={handleAuthCancel}
       />
+      )}
 
+      {isProjectModalOpen && (
       <ProjectModal
         isOpen={isProjectModalOpen}
         onClose={() => setIsProjectModalOpen(false)}
@@ -253,7 +264,9 @@ export default function App() {
         categories={categories}
         onAddCategory={handleAddCategory}
       />
+      )}
 
+      {isBlogModalOpen && (
       <BlogModal
         isOpen={isBlogModalOpen}
         onClose={() => setIsBlogModalOpen(false)}
@@ -263,7 +276,9 @@ export default function App() {
         blogCategories={blogCategories}
         onAddCategory={handleAddBlogCategory}
       />
+      )}
 
+      {isMongoModalOpen && (
       <MongoDbModal
         isOpen={isMongoModalOpen}
         onClose={() => setIsMongoModalOpen(false)}
@@ -271,13 +286,17 @@ export default function App() {
         onConnectMongo={handleConnectMongo}
         onResetSeedData={handleResetSeedData}
       />
+      )}
 
+      {isPublishModalOpen && (
       <PublishModal
         isOpen={isPublishModalOpen}
         onClose={() => setIsPublishModalOpen(false)}
         onSwitchToPublic={handleSwitchToPublic}
         projectsCount={totalProjectsCount}
       />
+      )}
+      </React.Suspense>
     </div>
   );
 }

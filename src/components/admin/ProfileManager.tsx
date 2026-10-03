@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User, Mail, MapPin, Github, Linkedin, FileText, Save } from 'lucide-react';
 import { ProfileData } from '../../types';
-import { normalizeImageUrl } from '../../utils/imageUtils';
+import { normalizeImageUrl, profileAvatarUrl } from '../../utils/imageUtils';
 import { ImageAdjuster } from './ImageAdjuster';
 
 interface ProfileManagerProps {
@@ -13,7 +13,10 @@ export const ProfileManager: React.FC<ProfileManagerProps> = ({
   profile,
   onUpdateProfile,
 }) => {
-  const [formData, setFormData] = useState<ProfileData>({ ...profile });
+  const [formData, setFormData] = useState<ProfileData>({
+    ...profile,
+    avatarUrl: profileAvatarUrl(profile.avatarUrl, profile.github),
+  });
   const [isSaved, setIsSaved] = useState(false);
 
   const handleChange = (field: keyof ProfileData, value: any) => {

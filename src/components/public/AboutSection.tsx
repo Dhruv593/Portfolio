@@ -1,6 +1,7 @@
 import React from 'react';
 import { MapPin, Mail, Github, Linkedin, FileText } from 'lucide-react';
 import { ProfileData } from '../../types';
+import { ProfileAvatar } from '../ProfileAvatar';
 
 interface AboutSectionProps {
   profile: ProfileData;
@@ -12,9 +13,6 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
       <div className="max-w-6xl mx-auto space-y-12">
         {/* Section Header */}
         <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 text-[#0058be] text-xs font-bold uppercase tracking-wider">
-            Background & Bio
-          </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#151c27]">
             About Me
           </h2>
@@ -27,24 +25,19 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none" />
 
             <div className="flex flex-col sm:flex-row items-center gap-5 relative z-10">
-              {profile.avatarUrl ? (
-                <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden border-2 border-white/30 shadow-md shrink-0">
-                  <img
-                    src={profile.avatarUrl}
-                    alt={profile.name}
-                    className="w-full h-full"
-                    style={{
-                      objectPosition: profile.avatarPosition || '50% 50%',
-                      objectFit: profile.avatarFit || 'cover',
-                      transform: profile.avatarScale && profile.avatarScale > 1 ? `scale(${profile.avatarScale})` : undefined,
-                    }}
-                  />
-                </div>
-              ) : (
-                <div className="w-24 h-24 rounded-2xl bg-white/20 text-white border border-white/30 flex items-center justify-center font-bold text-3xl shrink-0">
-                  {profile.name ? profile.name.charAt(0) : 'A'}
-                </div>
-              )}
+              <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden border-2 border-white/30 shadow-md shrink-0">
+                <ProfileAvatar
+                  profile={profile}
+                  className="w-full h-full"
+                  fallbackClassName="w-full h-full bg-white/20 text-white flex items-center justify-center font-bold text-3xl"
+                  loading="lazy"
+                  style={{
+                    objectPosition: profile.avatarPosition || '50% 50%',
+                    objectFit: profile.avatarFit || 'cover',
+                    transform: profile.avatarScale && profile.avatarScale > 1 ? `scale(${profile.avatarScale})` : undefined,
+                  }}
+                />
+              </div>
 
               <div className="space-y-1 text-center sm:text-left">
                 <h3 className="text-xl sm:text-2xl font-extrabold text-white">

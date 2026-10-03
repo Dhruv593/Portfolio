@@ -162,7 +162,7 @@ export const initialProfile: ProfileData = {
   name: 'Dhruv Lad',
   title: 'Senior Product Designer & Developer',
   subtitle: 'Manage your work and showcase your creations',
-  avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+  avatarUrl: 'https://avatars.githubusercontent.com/u/125176639?s=512&v=4',
   bioParagraph1: 'With over 8 years in the digital space, I\'ve learned that great design isn\'t just about how things look—it\'s about how they function. My journey started in traditional graphic design before moving into the world of UI/UX and Frontend Engineering.',
   bioParagraph2: 'I believe in building systems that are accessible, performant, and delightful to use. I thrive at the intersection of aesthetic precision and technical excellence, ensuring that every pixel serves a purpose in the user journey.',
   email: 'hello@portfolio.design',
@@ -171,6 +171,7 @@ export const initialProfile: ProfileData = {
   linkedin: 'https://linkedin.com',
   resumeUrl: 'https://example.com/resume.pdf',
   yearsExperience: 8,
+  sectionVisibility: { blog: false },
 };
 
 export const initialBlogs: BlogPost[] = [

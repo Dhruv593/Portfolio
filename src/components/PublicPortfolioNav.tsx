@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Menu, X, FileText } from 'lucide-react';
 import { ProfileData } from '../types';
+import { isSectionVisible, portfolioSections } from '../utils/sectionVisibility';
 
 interface PublicPortfolioNavProps {
   profile: ProfileData;
@@ -49,54 +50,11 @@ export const PublicPortfolioNav: React.FC<PublicPortfolioNavProps> = ({
 
         {/* Center: Centered Nav Tabs */}
         <nav className="hidden lg:flex items-center justify-center gap-5 xl:gap-8 font-medium text-sm text-[#424754]">
-          <button
-            onClick={() => scrollTo('hero')}
-            className="hover:text-[#0058be] transition-colors cursor-pointer"
-          >
-            Home
-          </button>
-          <button
-            onClick={() => scrollTo('about')}
-            className="hover:text-[#0058be] transition-colors cursor-pointer"
-          >
-            About
-          </button>
-          <button
-            onClick={() => scrollTo('experience')}
-            className="hover:text-[#0058be] transition-colors cursor-pointer"
-          >
-            Experience
-          </button>
-          <button
-            onClick={() => scrollTo('projects')}
-            className="hover:text-[#0058be] transition-colors cursor-pointer"
-          >
-            Projects
-          </button>
-          {/* <button
-            onClick={() => scrollTo('blog')}
-            className="hover:text-[#0058be] transition-colors cursor-pointer"
-          >
-            Blog
-          </button> */}
-          <button
-            onClick={() => scrollTo('skills')}
-            className="hover:text-[#0058be] transition-colors cursor-pointer"
-          >
-            Skills
-          </button>
-          <button
-            onClick={() => scrollTo('education')}
-            className="hover:text-[#0058be] transition-colors cursor-pointer"
-          >
-            Education
-          </button>
-          <button
-            onClick={() => scrollTo('contact')}
-            className="hover:text-[#0058be] transition-colors cursor-pointer"
-          >
-            Contact
-          </button>
+          {portfolioSections.filter(({ id }) => isSectionVisible(profile, id)).map(({ id, label }) => (
+            <button key={id} onClick={() => scrollTo(id)} className="hover:text-[#0058be] transition-colors cursor-pointer">
+              {id === 'hero' ? 'Home' : label}
+            </button>
+          ))}
         </nav>
 
         {/* Right Side: Resume Button */}
@@ -124,54 +82,11 @@ export const PublicPortfolioNav: React.FC<PublicPortfolioNavProps> = ({
       {isMobileMenuOpen && (
         <div className="lg:hidden mt-2 bg-white/95 backdrop-blur-md border border-slate-200 rounded-2xl px-6 py-6 space-y-4 shadow-xl animate-slide-down">
           <nav className="flex flex-col space-y-3 font-semibold text-sm">
-            <button
-              onClick={() => scrollTo('hero')}
-              className="text-left text-[#151c27] hover:text-[#0058be] py-1 cursor-pointer"
-            >
-              Home
-            </button>
-            <button
-              onClick={() => scrollTo('about')}
-              className="text-left text-[#151c27] hover:text-[#0058be] py-1 cursor-pointer"
-            >
-              About
-            </button>
-            <button
-              onClick={() => scrollTo('experience')}
-              className="text-left text-[#151c27] hover:text-[#0058be] py-1 cursor-pointer"
-            >
-              Experience
-            </button>
-            <button
-              onClick={() => scrollTo('projects')}
-              className="text-left text-[#151c27] hover:text-[#0058be] py-1 cursor-pointer"
-            >
-              Projects
-            </button>
-            {/* <button
-              onClick={() => scrollTo('blog')}
-              className="text-left text-[#151c27] hover:text-[#0058be] py-1 cursor-pointer"
-            >
-              Blog
-            </button> */}
-            <button
-              onClick={() => scrollTo('skills')}
-              className="text-left text-[#151c27] hover:text-[#0058be] py-1 cursor-pointer"
-            >
-              Skills
-            </button>
-            <button
-              onClick={() => scrollTo('education')}
-              className="text-left text-[#151c27] hover:text-[#0058be] py-1 cursor-pointer"
-            >
-              Education
-            </button>
-            <button
-              onClick={() => scrollTo('contact')}
-              className="text-left text-[#151c27] hover:text-[#0058be] py-1 cursor-pointer"
-            >
-              Contact
-            </button>
+            {portfolioSections.filter(({ id }) => isSectionVisible(profile, id)).map(({ id, label }) => (
+              <button key={id} onClick={() => scrollTo(id)} className="text-left text-[#151c27] hover:text-[#0058be] py-1 cursor-pointer">
+                {id === 'hero' ? 'Home' : label}
+              </button>
+            ))}
           </nav>
           <div className="pt-3 border-t border-slate-100">
             <button

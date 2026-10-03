@@ -7,12 +7,16 @@ interface HeroSectionProps {
   profile: ProfileData;
   onExploreClick: () => void;
   onContactClick: () => void;
+  showExplore: boolean;
+  showContact: boolean;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   profile,
   onExploreClick,
   onContactClick,
+  showExplore,
+  showContact,
 }) => {
   return (
     <section id="hero" className="relative pt-24 sm:pt-28 pb-14 sm:pb-20 px-6 sm:px-8 lg:px-10 max-w-6xl mx-auto overflow-hidden flex flex-col justify-center min-h-[calc(100vh-5rem)] scroll-mt-20">
@@ -48,21 +52,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
           {/* Action CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2 w-full sm:w-auto">
-            <button
+            {showExplore && <button
               onClick={onExploreClick}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 bg-[#0058be] hover:bg-[#2170e4] text-white font-bold rounded-2xl shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer text-sm sm:text-base group"
             >
               <span>Explore Projects</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+            </button>}
 
-            <button
+            {showContact && <button
               onClick={onContactClick}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white hover:bg-slate-50 border border-slate-200/90 text-[#151c27] font-bold rounded-2xl shadow-2xs hover:border-slate-300 transition-all duration-200 cursor-pointer text-sm sm:text-base"
             >
               <Mail className="w-4 h-4 text-[#0058be]" />
               <span>Get in Touch</span>
-            </button>
+            </button>}
           </div>
 
           {/* Quick Social & Resume Links */}

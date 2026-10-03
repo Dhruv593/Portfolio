@@ -30,14 +30,14 @@ class DatabaseService {
       return false;
     }
 
-    // Reuse existing connection if active and matching URI
-    if (this.isConnected && this.client && this.db && this.currentUri === targetUri && !customUri) {
-      return true;
-    }
-
     // Return in-flight connection promise to prevent concurrent duplicate connections
     if (this.connectingPromise && !customUri) {
       return this.connectingPromise;
+    }
+
+    // Reuse an active connection once its initial collection sync has finished.
+    if (this.isConnected && this.client && this.db && this.currentUri === targetUri && !customUri) {
+      return true;
     }
 
     this.currentUri = targetUri;
@@ -83,87 +83,55 @@ class DatabaseService {
   }
 
   private async syncCollections() {
-    if (!this.db) return;
+    const db = this.db;
+    if (!db) return;
 
     try {
-      // 1. Projects collection sync
-      const projectsCol = this.db.collection('projects');
-      const projCount = await projectsCol.countDocuments();
-      if (projCount === 0 && dbStore.projects.length > 0) {
-        await projectsCol.insertMany(dbStore.projects.map((p) => ({ ...p, _id: p.id } as any)));
-      } else if (projCount > 0) {
-        const docs = await projectsCol.find({}).toArray();
-        dbStore.projects = docs.map((doc) => {
-          const { _id, ...rest } = doc;
-          return { id: (doc.id || _id?.toString()) as string, ...rest } as any;
-        });
-      }
-
-      // 2. Experience collection sync
-      const expCol = this.db.collection('experience');
-      const expCount = await expCol.countDocuments();
-      if (expCount === 0 && dbStore.experience.length > 0) {
-        await expCol.insertMany(dbStore.experience.map((e) => ({ ...e, _id: e.id } as any)));
-      } else if (expCount > 0) {
-        const docs = await expCol.find({}).toArray();
-        dbStore.experience = docs.map((doc) => {
-          const { _id, ...rest } = doc;
-          return { id: (doc.id || _id?.toString()) as string, ...rest } as any;
-        });
-      }
-
-      // 3. Education collection sync
-      const eduCol = this.db.collection('education');
-      const eduCount = await eduCol.countDocuments();
-      if (eduCount === 0 && dbStore.education.length > 0) {
-        await eduCol.insertMany(dbStore.education.map((e) => ({ ...e, _id: e.id } as any)));
-      } else if (eduCount > 0) {
-        const docs = await eduCol.find({}).toArray();
-        dbStore.education = docs.map((doc) => {
-          const { _id, ...rest } = doc;
-          return { id: (doc.id || _id?.toString()) as string, ...rest } as any;
-        });
-      }
-
-      // 4. Skills collection sync
-      const skillsCol = this.db.collection('skills');
-      const skillsCount = await skillsCol.countDocuments();
-      if (skillsCount === 0 && dbStore.skills.length > 0) {
-        await skillsCol.insertMany(dbStore.skills.map((s) => ({ ...s, _id: s.id } as any)));
-      } else if (skillsCount > 0) {
-        const docs = await skillsCol.find({}).toArray();
-        dbStore.skills = docs.map((doc) => {
-          const { _id, ...rest } = doc;
-          return { id: (doc.id || _id?.toString()) as string, ...rest } as any;
-        });
-      }
-
-      // 5. Profile collection sync
-      const profileCol = this.db.collection('profile');
-      const profileCount = await profileCol.countDocuments();
-      if (profileCount === 0 && dbStore.profile.length > 0) {
-        await profileCol.insertOne({ ...dbStore.profile[0], _id: 'main-profile' } as any);
-      } else if (profileCount > 0) {
-        const docs = await profileCol.find({}).toArray();
-        if (docs.length > 0) {
-          const { _id, ...rest } = docs[0];
-          dbStore.profile = [rest as any];
+      const syncById = async (
+        collectionName: string,
+        items: Array<{ id: string }>,
+        updateStore: (docs: any[]) => void
+      ) => {
+        const collection = db.collection(collectionName);
+        const count = await collection.countDocuments();
+        if (count === 0 && items.length > 0) {
+          await collection.insertMany(items.map((item) => ({ ...item, _id: item.id } as any)));
+        } else if (count > 0) {
+          const docs = await collection.find({}).toArray();
+          updateStore(docs.map((doc) => {
+            const { _id, ...rest } = doc;
+            return { id: (doc.id || _id?.toString()) as string, ...rest };
+          }));
         }
-      }
+      };
 
-      // 6. Messages collection sync
-      const messagesCol = this.db.collection('messages');
-      const messagesCount = await messagesCol.countDocuments();
-      if (messagesCount === 0 && dbStore.messages && dbStore.messages.length > 0) {
-        await messagesCol.insertMany(dbStore.messages.map((m) => ({ ...m, _id: m.id } as any)));
-      } else if (messagesCount > 0) {
-        const docs = await messagesCol.find({}).toArray();
-        dbStore.messages = docs.map((doc) => {
-          const { _id, ...rest } = doc;
-          return { id: (doc.id || _id?.toString()) as string, ...rest } as any;
-        });
-      }
-
+      // These collections are independent, so sync them concurrently on cold start.
+      const syncResults = await Promise.allSettled([
+        syncById('projects', dbStore.projects, (docs) => { dbStore.projects = docs; }),
+        syncById('blogs', dbStore.blogs || [], (docs) => { dbStore.blogs = docs; }),
+        syncById('experience', dbStore.experience, (docs) => { dbStore.experience = docs; }),
+        syncById('education', dbStore.education, (docs) => { dbStore.education = docs; }),
+        syncById('skills', dbStore.skills, (docs) => { dbStore.skills = docs; }),
+        syncById('messages', dbStore.messages || [], (docs) => { dbStore.messages = docs; }),
+        (async () => {
+          const profileCol = db.collection('profile');
+          const profileCount = await profileCol.countDocuments();
+          if (profileCount === 0 && dbStore.profile.length > 0) {
+            await profileCol.insertOne({ ...dbStore.profile[0], _id: 'main-profile' } as any);
+          } else if (profileCount > 0) {
+            const docs = await profileCol.find({}).toArray();
+            if (docs.length > 0) {
+              const { _id, ...rest } = docs[0];
+              dbStore.profile = [rest as any];
+            }
+          }
+        })(),
+      ]);
+      syncResults.forEach((result) => {
+        if (result.status === 'rejected') {
+          logger.error('Error during MongoDB collection sync', result.reason);
+        }
+      });
       saveJsonStore();
     } catch (err) {
       logger.error('Error during MongoDB collection sync', err);

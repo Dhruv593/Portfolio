@@ -82,7 +82,10 @@ export interface ProfileData {
   dribbble?: string;
   resumeUrl?: string;
   yearsExperience: number;
+  sectionVisibility?: Partial<Record<PortfolioSectionId, boolean>>;
 }
+
+export type PortfolioSectionId = 'hero' | 'about' | 'experience' | 'projects' | 'skills' | 'education' | 'blog' | 'contact';
 
 export interface DashboardStats {
   totalProjects: number;

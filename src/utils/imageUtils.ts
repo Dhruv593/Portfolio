@@ -30,3 +30,26 @@ export function normalizeImageUrl(url?: string): string {
 
   return trimmed;
 }
+
+export function githubAvatarUrl(githubUrl?: string): string {
+  if (!githubUrl) return '';
+
+  try {
+    const url = new URL(githubUrl);
+    const username = url.pathname.split('/').filter(Boolean);
+    if (!['github.com', 'www.github.com'].includes(url.hostname) ||
+        username.length !== 1 || !/^[a-zA-Z0-9-]+$/.test(username[0])) {
+      return '';
+    }
+    return `https://github.com/${username[0]}.png?size=512`;
+  } catch {
+    return '';
+  }
+}
+
+const unavailableAvatarUrl = 'https://lh3.googleusercontent.com/d/14REp0jKL4idzhG20Ne2pxDohEMscvDqc';
+
+export function profileAvatarUrl(avatarUrl?: string, githubUrl?: string): string {
+  const preferred = avatarUrl?.trim() || '';
+  return preferred === unavailableAvatarUrl ? githubAvatarUrl(githubUrl) : preferred;
+}

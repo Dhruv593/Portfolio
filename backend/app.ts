@@ -43,19 +43,17 @@ app.use(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-app.use((_req, res, next) => {
+app.use('/api', (_req, res, next) => {
   res.setHeader('Cache-Control', 'no-store');
   next();
 });
 
 // 4. Serverless & Runtime MongoDB lazy connection middleware
-app.use(async (_req, _res, next) => {
-  if (!dbService.getDb()) {
-    try {
-      await dbService.connect();
-    } catch (err) {
-      logger.error('Database connection error in request handler', err);
-    }
+app.use('/api', async (_req, _res, next) => {
+  try {
+    await dbService.connect();
+  } catch (err) {
+    logger.error('Database connection error in request handler', err);
   }
   next();
 });

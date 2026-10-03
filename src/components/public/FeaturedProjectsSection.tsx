@@ -23,9 +23,6 @@ export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionProps> = (
       <div className="max-w-6xl mx-auto space-y-12">
         <div className="flex flex-col items-center justify-center gap-4">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-[#0058be] text-xs font-bold uppercase tracking-wider">
-              Featured Work
-            </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#151c27]">
               Crafted Applications & Systems
             </h2>
@@ -43,6 +40,8 @@ export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionProps> = (
                   <img
                     src={normalizeImageUrl(project.image)}
                     alt={project.name}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full transition-transform duration-500"
                     style={{
                       objectPosition: project.imagePosition || '50% 50%',

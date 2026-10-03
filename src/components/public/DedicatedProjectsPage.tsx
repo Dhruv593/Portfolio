@@ -98,6 +98,8 @@ export const DedicatedProjectsPage: React.FC<DedicatedProjectsPageProps> = ({
                     <img
                       src={normalizeImageUrl(project.image)}
                       alt={project.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full transition-transform duration-500"
                       style={{
                         objectPosition: project.imagePosition || '50% 50%',

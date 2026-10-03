@@ -11,6 +11,7 @@ import { BlogSection } from './public/BlogSection';
 import { PortfolioFooter } from './public/PortfolioFooter';
 import { DedicatedProjectsPage } from './public/DedicatedProjectsPage';
 import { ProjectDetailModal } from './public/ProjectDetailModal';
+import { isSectionVisible } from '../utils/sectionVisibility';
 
 interface PublicPortfolioViewProps {
   projects: Project[];
@@ -44,36 +45,38 @@ export const PublicPortfolioView: React.FC<PublicPortfolioViewProps> = ({
   return (
     <div className="bg-[#f9f9ff] text-[#151c27] min-h-screen font-sans selection:bg-blue-100 selection:text-blue-900">
       {/* 1. Hero Section */}
-      <HeroSection
+      {isSectionVisible(profile, 'hero') && <HeroSection
         profile={profile}
         onExploreClick={() => handleScrollTo('projects')}
         onContactClick={() => handleScrollTo('contact')}
-      />
+        showExplore={isSectionVisible(profile, 'projects')}
+        showContact={isSectionVisible(profile, 'contact')}
+      />}
 
       {/* 2. About Section */}
-      <AboutSection profile={profile} />
+      {isSectionVisible(profile, 'about') && <AboutSection profile={profile} />}
 
       {/* 3. Experience Section */}
-      <ExperienceSection experience={experience} />
+      {isSectionVisible(profile, 'experience') && <ExperienceSection experience={experience} />}
 
       {/* 4. Projects Section */}
-      <FeaturedProjectsSection
+      {isSectionVisible(profile, 'projects') && <FeaturedProjectsSection
         projects={projects}
         onOpenDedicatedPage={() => setIsDedicatedProjectsPageOpen(true)}
         onSelectProject={(project) => setSelectedProjectForDetail(project)}
-      />
+      />}
 
       {/* 5. Skills Section */}
-      <SkillsSection skills={skills} />
+      {isSectionVisible(profile, 'skills') && <SkillsSection skills={skills} />}
 
       {/* 6. Education Section */}
-      <EducationSection education={education} />
+      {isSectionVisible(profile, 'education') && <EducationSection education={education} />}
 
       {/* Blog Section (Commented out for now as requested) */}
-      <BlogSection blogs={blogs} profile={profile} />
+      {isSectionVisible(profile, 'blog') && <BlogSection blogs={blogs} profile={profile} />}
 
       {/* 7. Contact Section */}
-      <ContactSection profile={profile} />
+      {isSectionVisible(profile, 'contact') && <ContactSection profile={profile} />}
 
       {/* Public Footer */}
       <PortfolioFooter profile={profile} onSwitchToAdmin={onSwitchToAdmin} />

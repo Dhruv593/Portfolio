@@ -34,9 +34,6 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile }) => {
   return (
     <section id="contact" className="pt-10 sm:pt-12 pb-20 sm:pb-24 max-w-6xl mx-auto px-6 sm:px-8 lg:px-10 space-y-12 scroll-mt-20">
       <div className="text-center space-y-2 max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-[#0058be] text-xs font-bold uppercase tracking-wider">
-          Get in Touch
-        </div>
         <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#151c27]">
           Let's Build Something Together
         </h2>

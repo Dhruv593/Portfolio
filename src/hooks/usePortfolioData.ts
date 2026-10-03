@@ -9,7 +9,9 @@ import {
   ProfileData,
   DashboardStats,
   MongoConfig,
+  PortfolioSectionId,
 } from '../types';
+import { isSectionVisible } from '../utils/sectionVisibility';
 import {
   initialProjects,
   initialBlogs,
@@ -20,7 +22,10 @@ import {
 } from '../data/initialData';
 import { AdminTab } from '../components/admin/AdminSidebar';
 
-export function usePortfolioData(showToast: (text: string, type?: 'success' | 'error' | 'info') => void) {
+export function usePortfolioData(
+  showToast: (text: string, type?: 'success' | 'error' | 'info') => void,
+  viewMode: 'admin' | 'public'
+) {
   const [adminTab, setAdminTabState] = useState<AdminTab>(() => {
     if (typeof window !== 'undefined') {
       const saved = sessionStorage.getItem('portfolio_admin_tab') as AdminTab;
@@ -57,6 +62,7 @@ export function usePortfolioData(showToast: (text: string, type?: 'success' | 'e
   const [education, setEducation] = useState<EducationItem[]>(initialEducation);
   const [skills, setSkills] = useState<SkillCategory[]>(initialSkills);
   const [profile, setProfile] = useState<ProfileData>(initialProfile);
+  const [visibilitySaving, setVisibilitySaving] = useState(false);
   const [stats, setStats] = useState<DashboardStats>({
     totalProjects: 24,
     liveViewers: '1.2k',
@@ -204,19 +210,28 @@ export function usePortfolioData(showToast: (text: string, type?: 'success' | 'e
     } catch {}
   }, []);
 
-  // Initial Data Synchronization
+  // Project filters should only reload projects, not every portfolio endpoint.
   useEffect(() => {
     loadProjects();
-    loadCategories();
+  }, [loadProjects]);
+
+  // Content displayed on the public portfolio.
+  useEffect(() => {
     loadBlogs();
-    loadBlogCategories();
     loadExperience();
     loadEducation();
     loadSkills();
     loadProfile();
+  }, [loadBlogs, loadExperience, loadEducation, loadSkills, loadProfile]);
+
+  // Admin-only data is not needed for the public page.
+  useEffect(() => {
+    if (viewMode !== 'admin') return;
+    loadCategories();
+    loadBlogCategories();
     loadStats();
     loadMongoStatus();
-  }, [loadProjects, loadCategories, loadBlogs, loadBlogCategories, loadExperience, loadEducation, loadSkills, loadProfile, loadStats, loadMongoStatus]);
+  }, [viewMode, loadCategories, loadBlogCategories, loadStats, loadMongoStatus]);
 
   // Blog Handlers
   const handleOpenAddBlog = () => {
@@ -428,6 +443,26 @@ export function usePortfolioData(showToast: (text: string, type?: 'success' | 'e
     }
   };
 
+  const handleUpdateSectionVisibility = async (section: PortfolioSectionId) => {
+    if (visibilitySaving) return;
+    const previous = profile;
+    const sectionVisibility = {
+      ...profile.sectionVisibility,
+      [section]: !isSectionVisible(profile, section),
+    };
+    setProfile({ ...profile, sectionVisibility });
+    setVisibilitySaving(true);
+    try {
+      await portfolioApi.updateProfile({ sectionVisibility });
+      showToast(`${section} section ${sectionVisibility[section] ? 'shown' : 'hidden'} on the website`);
+    } catch {
+      setProfile(previous);
+      showToast('Failed to update section visibility', 'error');
+    } finally {
+      setVisibilitySaving(false);
+    }
+  };
+
   // Mongo Handlers
   const handleConnectMongo = async (uri: string) => {
     try {
@@ -487,6 +522,7 @@ export function usePortfolioData(showToast: (text: string, type?: 'success' | 'e
     education,
     skills,
     profile,
+    visibilitySaving,
     stats,
     mongoConfig,
     isProjectModalOpen,
@@ -521,6 +557,7 @@ export function usePortfolioData(showToast: (text: string, type?: 'success' | 'e
     handleUpdateSkillCategory,
     handleDeleteSkillCategory,
     handleUpdateProfile,
+    handleUpdateSectionVisibility,
     handleConnectMongo,
     handleResetSeedData,
   };

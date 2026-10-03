@@ -1,6 +1,7 @@
 import React from 'react';
 import { Search, Bell, Settings, Menu, Database, Eye, LogOut, Lock } from 'lucide-react';
 import { MongoConfig, ProfileData } from '../../types';
+import { ProfileAvatar } from '../ProfileAvatar';
 
 interface AdminTopBarProps {
   searchQuery: string;
@@ -99,10 +100,10 @@ export const AdminTopBar: React.FC<AdminTopBarProps> = ({
 
         {/* User Profile Avatar & Logout */}
         <div className="flex items-center gap-3 pl-2 border-l border-slate-200">
-          <img
-            src={profile.avatarUrl}
-            alt={profile.name}
+          <ProfileAvatar
+            profile={profile}
             className="w-8 h-8 rounded-full object-cover ring-2 ring-blue-500/20"
+            fallbackClassName="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs"
           />
           <button
             onClick={onLogout}

@@ -95,6 +95,16 @@ export const profileSchema = z.object({
     statsPositions: z.string().optional(),
     statsQuality: z.string().optional(),
     resumeFileName: z.string().optional(),
+      sectionVisibility: z.object({
+        hero: z.boolean().optional(),
+        about: z.boolean().optional(),
+        experience: z.boolean().optional(),
+        projects: z.boolean().optional(),
+        skills: z.boolean().optional(),
+        education: z.boolean().optional(),
+        blog: z.boolean().optional(),
+        contact: z.boolean().optional(),
+      }).optional(),
   }),
 });
 

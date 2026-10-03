@@ -9,8 +9,10 @@ import {
   Grid,
   Check,
   Eye,
+  Upload,
 } from 'lucide-react';
 import { normalizeImageUrl } from '../../utils/imageUtils';
+import { uploadImage } from '../../api/mediaApi';
 
 interface ImageAdjusterProps {
   imageUrl: string;
@@ -38,7 +40,27 @@ export const ImageAdjuster: React.FC<ImageAdjusterProps> = ({
   sectionName = 'Card Viewport',
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState('');
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setIsUploading(true);
+    setUploadMessage('');
+    try {
+      const url = await uploadImage(file, aspectRatio === '1:1' ? 512 : 1600);
+      onImageUrlChange(url);
+      setUploadMessage('Upload complete. Save your changes to publish it.');
+    } catch (error) {
+      setUploadMessage(error instanceof Error ? error.message : 'Image upload failed.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   // Parse "X% Y%" string to numeric numbers [posX, posY]
   const parsePos = (posStr: string) => {
@@ -100,7 +122,7 @@ export const ImageAdjuster: React.FC<ImageAdjusterProps> = ({
 
   return (
     <div className="bg-slate-50/90 border border-slate-200/90 p-4 sm:p-5 rounded-2xl space-y-4">
-      {/* Label and URL Input */}
+      {/* Upload and URL input */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <label className="text-xs font-bold text-[#151c27] uppercase tracking-wider flex items-center gap-1.5">
@@ -119,6 +141,27 @@ export const ImageAdjuster: React.FC<ImageAdjusterProps> = ({
           placeholder="Paste image link here..."
           className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:outline-none focus:border-[#0058be] focus:ring-2 focus:ring-blue-500/10 transition-all"
         />
+        <div className="flex flex-wrap items-center gap-3 pt-1">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/avif"
+            onChange={handleFileChange}
+            className="sr-only"
+            aria-label="Choose image to upload"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#0058be] text-white text-xs font-bold hover:bg-[#2170e4] disabled:opacity-60"
+          >
+            <Upload className="w-4 h-4" />
+            {isUploading ? 'Uploading…' : 'Upload image'}
+          </button>
+          <span className="text-[11px] text-slate-500">JPEG, PNG, WebP, or AVIF · max 5 MB</span>
+        </div>
+        {uploadMessage && <p role="status" className="text-xs text-slate-600">{uploadMessage}</p>}
       </div>
 
       {/* Preview & Positioning Area */}
@@ -291,7 +334,7 @@ export const ImageAdjuster: React.FC<ImageAdjusterProps> = ({
         </div>
       ) : (
         <div className="p-4 bg-white rounded-xl border border-dashed border-slate-200 text-center text-xs text-slate-400 font-medium">
-          Paste an image URL above to unlock interactive cropping & framing controls.
+          Upload an image or paste a URL above to unlock interactive cropping & framing controls.
         </div>
       )}
     </div>

@@ -18,7 +18,7 @@ export class ProfileService {
     if (mongoDb) {
       await mongoDb.collection('profile').updateOne(
         { _id: 'main-profile' } as any,
-        { $set: { ...updated, _id: 'main-profile' } },
+        { $set: updated },
         { upsert: true }
       );
     }
