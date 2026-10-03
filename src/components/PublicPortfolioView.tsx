@@ -38,7 +38,7 @@ export const PublicPortfolioView: React.FC<PublicPortfolioViewProps> = ({
   const handleScrollTo = (sectionId: string) => {
     const el = document.getElementById(sectionId);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
     }
   };
 

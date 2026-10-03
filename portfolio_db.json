@@ -207,11 +207,20 @@
       "avatarPosition": "48% 1%",
       "avatarFit": "cover",
       "sectionVisibility": {
-        "blog": true
+        "blog": false
       }
     }
   ],
   "messages": [
+    {
+      "id": "msg-1791010551932-adxs4",
+      "name": "Dhruv Lad",
+      "email": "cocdhruv4444@gmail.com",
+      "subject": "Project Inquiry",
+      "message": "Hello There",
+      "createdAt": "2026-10-03T06:55:51.932Z",
+      "read": false
+    },
     {
       "id": "msg-1785915439829-gl2lz",
       "name": "Dhruv Lad",

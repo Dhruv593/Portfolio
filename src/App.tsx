@@ -27,6 +27,7 @@ export default function App() {
 
   const {
     viewMode,
+    isAdminAuthenticated,
     isAdminAuthModalOpen,
     handleSwitchToAdmin,
     handleSwitchToPublic,
@@ -94,7 +95,7 @@ export default function App() {
     visibilitySaving,
     handleConnectMongo,
     handleResetSeedData,
-  } = usePortfolioData(showToast, viewMode);
+  } = usePortfolioData(showToast, viewMode, isAdminAuthenticated);
 
   return (
     <div className="min-h-screen bg-[#f9f9ff] text-[#151c27]">
@@ -120,7 +121,7 @@ export default function App() {
       ) : (
         // --- ADMIN CONSOLE VIEW ---
         <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading admin…</div>}>
-        <div className="min-h-screen flex flex-col md:flex-row">
+        <div className="admin-workspace min-h-screen bg-[#f5f7fa]">
           {/* Admin Sidebar */}
           <AdminSidebar
             activeTab={adminTab}
@@ -132,10 +133,9 @@ export default function App() {
           />
 
           {/* Main Content Area */}
-          <div className="flex-1 lg:ml-64 flex flex-col min-h-screen bg-[#f8fafc]">
+          <div className="flex min-h-screen min-w-0 flex-col lg:ml-60">
             <AdminTopBar
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
+              activeTab={adminTab}
               mongoConfig={mongoConfig}
               onOpenMongoModal={() => setIsMongoModalOpen(true)}
               onOpenSettingsModal={() => setIsMongoModalOpen(true)}
@@ -145,7 +145,7 @@ export default function App() {
               profile={profile}
             />
 
-            <main className="flex-1 p-6 sm:p-8 max-w-7xl mx-auto w-full">
+            <main className="mx-auto w-full min-w-0 max-w-[1600px] flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
               {adminTab === 'overview' && (
                 <AdminOverview
                   profile={profile}
@@ -162,6 +162,7 @@ export default function App() {
                   onOpenMongoModal={() => setIsMongoModalOpen(true)}
                   onUpdateSectionVisibility={handleUpdateSectionVisibility}
                   visibilitySaving={visibilitySaving}
+                  isAdminAuthenticated={isAdminAuthenticated}
                 />
               )}
 
@@ -235,10 +236,6 @@ export default function App() {
               )}
             </main>
 
-            {/* Footer */}
-            <footer className="py-6 border-t border-slate-200 text-center text-xs text-slate-500">
-              © {new Date().getFullYear()} Portfolio Admin Console • Built with Luminous Design System
-            </footer>
           </div>
         </div>
         </React.Suspense>

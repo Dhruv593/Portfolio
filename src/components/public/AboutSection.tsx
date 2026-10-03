@@ -21,15 +21,14 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
         {/* About Main Content Card Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Left Column: Avatar & Quick Info Blue Card (Matching Contact Card Style) */}
-          <div className="lg:col-span-5 bg-[#0058be] text-white rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="lg:col-span-5 bg-slate-50 text-[#151c27] rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
 
             <div className="flex flex-col sm:flex-row items-center gap-5 relative z-10">
-              <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden border-2 border-white/30 shadow-md shrink-0">
+              <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl overflow-hidden bg-slate-200 shrink-0">
                 <ProfileAvatar
                   profile={profile}
                   className="w-full h-full"
-                  fallbackClassName="w-full h-full bg-white/20 text-white flex items-center justify-center font-bold text-3xl"
+                  fallbackClassName="w-full h-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-3xl"
                   loading="lazy"
                   style={{
                     objectPosition: profile.avatarPosition || '50% 50%',
@@ -40,15 +39,15 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
               </div>
 
               <div className="space-y-1 text-center sm:text-left">
-                <h3 className="text-xl sm:text-2xl font-extrabold text-white">
+                <h3 className="text-xl sm:text-2xl font-semibold text-[#151c27]">
                   {profile.name}
                 </h3>
-                <p className="text-sm font-semibold text-blue-100">
+                <p className="text-sm font-medium text-slate-600">
                   {profile.title}
                 </p>
                 {profile.location && (
-                  <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs text-blue-200 pt-1">
-                    <MapPin className="w-3.5 h-3.5 text-blue-200" />
+                  <div className="flex items-center justify-center sm:justify-start gap-1.5 text-sm text-slate-600 pt-1">
+                    <MapPin className="w-4 h-4" />
                     <span>{profile.location}</span>
                   </div>
                 )}
@@ -56,11 +55,11 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
             </div>
 
             {/* Quick Contact & Links */}
-            <div className="space-y-3 pt-4 border-t border-white/20 relative z-10">
+            <div className="space-y-3 pt-4 border-t border-slate-200 relative z-10">
               {profile.email && (
-                <div className="flex items-center gap-2.5 text-xs text-blue-100">
-                  <Mail className="w-4 h-4 text-blue-200 shrink-0" />
-                  <span className="font-semibold text-white">{profile.email}</span>
+                <div className="flex items-center gap-2.5 text-sm text-slate-700 min-w-0">
+                  <Mail className="w-4 h-4 text-slate-500 shrink-0" />
+                  <span className="font-medium break-all">{profile.email}</span>
                 </div>
               )}
 
@@ -70,7 +69,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
                     href={profile.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-xs font-semibold text-white transition-colors"
+                    className="inline-flex min-h-11 items-center gap-1.5 px-3 hover:bg-slate-200 rounded-xl text-sm font-medium text-slate-700 transition-colors"
                   >
                     <Github className="w-3.5 h-3.5" />
                     <span>GitHub</span>
@@ -81,7 +80,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
                     href={profile.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-xs font-semibold text-white transition-colors"
+                    className="inline-flex min-h-11 items-center gap-1.5 px-3 hover:bg-slate-200 rounded-xl text-sm font-medium text-slate-700 transition-colors"
                   >
                     <Linkedin className="w-3.5 h-3.5" />
                     <span>LinkedIn</span>
@@ -92,7 +91,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
                     href={profile.resumeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-xs font-semibold text-white transition-colors"
+                    className="inline-flex min-h-11 items-center gap-1.5 px-3 hover:bg-slate-200 rounded-xl text-sm font-medium text-slate-700 transition-colors"
                   >
                     <FileText className="w-3.5 h-3.5" />
                     <span>Resume</span>
@@ -104,13 +103,13 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ profile }) => {
 
           {/* Right Column: Detailed Narrative / Paragraphs */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="space-y-4 text-slate-700 text-base sm:text-lg leading-relaxed text-justify">
-              <p className="font-medium text-[#151c27] text-justify">
+            <div className="space-y-4 text-slate-700 text-base sm:text-lg leading-relaxed">
+              <p className="font-medium text-[#151c27]">
                 {profile.bioParagraph1 ||
                   "With extensive experience in digital product development, I bridge the gap between human-centered user interface design and resilient server infrastructure."}
               </p>
 
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed text-justify">
+              <p className="text-slate-600 text-base leading-relaxed">
                 {profile.bioParagraph2 ||
                   "I believe in building software systems that are accessible, maintainable, and highly performant. From micro-frontend design systems to distributed serverless APIs, my focus is delivering cohesive end-to-end user experiences."}
               </p>

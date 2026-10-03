@@ -32,7 +32,15 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogs = [], profile })
             <article
               key={blog.id}
               onClick={() => setSelectedBlog(blog)}
-              className="bg-slate-50/70 rounded-2xl border border-slate-200/80 shadow-2xs hover:shadow-lg hover:border-blue-300 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer group"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setSelectedBlog(blog);
+                }
+              }}
+              className="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col justify-between cursor-pointer group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0058be]"
             >
               <div>
                 {blog.image ? (
@@ -57,7 +65,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogs = [], profile })
                 )}
 
                 <div className="p-6 space-y-3">
-                  <div className="flex items-center gap-3 text-xs font-semibold text-slate-500">
+                  <div className="flex items-center gap-3 text-sm font-medium text-slate-500">
                     <span className="inline-flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5 text-slate-400" />
                       <span>{blog.date}</span>
@@ -85,7 +93,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogs = [], profile })
                     {blog.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2.5 py-0.5 rounded-md bg-white border border-slate-200/80 text-slate-600 text-[11px] font-semibold"
+                        className="text-slate-600 text-sm font-medium"
                       >
                         {tag}
                       </span>
@@ -93,7 +101,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogs = [], profile })
                   </div>
                 )}
 
-                <div className="flex items-center justify-between pt-3 border-t border-slate-200/60 text-xs font-bold text-[#0058be]">
+                <div className="flex items-center justify-between pt-3 border-t border-slate-200 text-sm font-semibold text-[#0058be]">
                   <span>Read Full Article</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -109,13 +117,13 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogs = [], profile })
           <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-8 py-3.5 flex items-center justify-between gap-4">
             <button
               onClick={() => setSelectedBlog(null)}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs sm:text-sm transition-colors cursor-pointer"
+              className="inline-flex min-h-11 items-center gap-2 px-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Articles</span>
             </button>
 
-            <span className="text-xs font-bold text-slate-500 truncate max-w-xs sm:max-w-md">
+            <span className="text-sm font-medium text-slate-500 truncate max-w-xs sm:max-w-md">
               {selectedBlog.title}
             </span>
 
@@ -124,7 +132,7 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogs = [], profile })
 
           <main className="max-w-4xl mx-auto px-6 py-12 sm:py-16 space-y-10">
             <div className="space-y-4">
-              <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-[#0058be]">
+              <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-[#0058be]">
                 <span className="bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider">
                   {selectedBlog.tags?.[0] || 'Engineering'}
                 </span>
@@ -143,8 +151,8 @@ export const BlogSection: React.FC<BlogSectionProps> = ({ blogs = [], profile })
                   {profile.name ? profile.name.charAt(0) : 'A'}
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-[#151c27]">{profile.name || 'Author'}</p>
-                  <p className="text-[11px] text-slate-500">{profile.title || 'Software Engineer'}</p>
+                  <p className="text-sm font-semibold text-[#151c27]">{profile.name || 'Author'}</p>
+                  <p className="text-sm text-slate-500">{profile.title || 'Software Engineer'}</p>
                 </div>
               </div>
             </div>

@@ -53,12 +53,12 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ education = 
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {sortedEducation.map((edu) => (
-            <div key={edu.id} className="bg-slate-50/70 rounded-2xl p-6 border border-slate-200/80 shadow-2xs space-y-3">
+            <div key={edu.id} className="bg-slate-50 rounded-2xl p-6 space-y-3">
               <div className="flex items-start justify-between gap-3">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-white text-slate-600 flex items-center justify-center shrink-0">
                   <GraduationCap className="w-5 h-5" />
                 </div>
-                <span className="text-xs font-semibold text-slate-500 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                <span className="text-sm font-medium text-slate-500">
                   {edu.period}
                 </span>
               </div>
@@ -69,11 +69,11 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ education = 
               </div>
 
               {edu.description && (
-                <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">{edu.description}</p>
+                <p className="text-slate-600 text-base leading-relaxed">{edu.description}</p>
               )}
 
               {edu.gpaOrHonors && (
-                <div className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200/60">
+                <div className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600">
                   <Award className="w-3.5 h-3.5" />
                   <span>{edu.gpaOrHonors}</span>
                 </div>

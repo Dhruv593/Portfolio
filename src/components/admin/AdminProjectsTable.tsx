@@ -52,76 +52,59 @@ export const AdminProjectsTable: React.FC<AdminProjectsTableProps> = ({
   setSearchQuery,
 }) => {
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 space-y-6">
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-extrabold tracking-tight text-[#151c27]">
-            Projects Catalog
-          </h2>
-          <p className="text-slate-500 text-xs mt-1 font-medium">
-            Curate and oversee your portfolio work samples and case studies.
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+            Projects
+          </h1>
+          <p className="mt-1 text-sm text-slate-600">
+            Manage published work and drafts in one place.
           </p>
         </div>
         <button
           onClick={onAddNewProject}
-          className="bg-[#0058be] hover:bg-[#2170e4] text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-xs hover:shadow-sm transition-colors cursor-pointer shrink-0"
+          className="flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#0058be] px-4 text-sm font-semibold text-white hover:bg-[#004a9f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0058be]"
         >
           <Plus className="w-4 h-4" />
-          <span>Add New Project</span>
+          <span>Add project</span>
         </button>
       </div>
 
-      {/* Dashboard Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-2xl shadow-3xs border border-slate-200/80 flex flex-col justify-between">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            Total Projects
-          </p>
-          <p className="text-2xl font-black text-[#0058be] mt-2">
-            {stats.totalProjects}
-          </p>
-        </div>
-        <div className="bg-white p-6 rounded-2xl shadow-3xs border border-slate-200/80 flex flex-col justify-between">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            Live Viewers
-          </p>
-          <p className="text-2xl font-black text-[#0058be] mt-2">
-            {stats.liveViewers}
-          </p>
-        </div>
-        <div className="bg-white p-6 rounded-2xl shadow-3xs border border-slate-200/80 flex flex-col justify-between">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            Recent Activity
-          </p>
-          <p className="text-2xl font-black text-[#0058be] mt-2">
-            {stats.recentActivity}
-          </p>
-        </div>
+      <div className="grid gap-3 sm:grid-cols-3">
+        {[{ label: 'Total projects', value: stats.totalProjects }, { label: 'Published', value: stats.publishedCount }, { label: 'Drafts', value: stats.draftCount }].map(({ label, value }) => (
+          <div key={label} className="rounded-xl border border-slate-200 bg-white p-4">
+            <p className="text-sm text-slate-600">{label}</p>
+            <p className="mt-2 text-2xl font-semibold tabular-nums text-slate-900">{value}</p>
+          </div>
+        ))}
       </div>
 
       {/* Filter and Search Bar for Table */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-3xs">
-        <div className="flex items-center gap-3 relative flex-1">
+      <div className="flex min-w-0 flex-col items-stretch justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center">
+        <div className="relative min-w-0 flex-1">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
+            aria-label="Search projects"
             placeholder="Search projects by title, category, or tag..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 text-xs bg-slate-50 hover:bg-slate-100/70 focus:bg-white rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-slate-800 outline-hidden placeholder:text-slate-400 transition-all font-medium"
+            className="min-h-11 w-full rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 placeholder:text-slate-500 focus:border-[#0058be] focus:bg-white focus:outline-2 focus:outline-[#0058be]"
           />
         </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Status:</span>
+        <div className="flex shrink-0 items-center gap-2.5">
+          <label htmlFor="project-status-filter" className="text-sm font-medium text-slate-600">Status</label>
           <select
+            id="project-status-filter"
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="bg-slate-50 hover:bg-slate-100 text-xs text-slate-700 font-bold py-2.5 px-3.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-hidden cursor-pointer transition-all"
+            className="min-h-11 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700 focus:border-[#0058be] focus:outline-2 focus:outline-[#0058be]"
           >
             <option value="All">All Projects</option>
             <option value="Published">Published</option>
@@ -131,21 +114,21 @@ export const AdminProjectsTable: React.FC<AdminProjectsTableProps> = ({
       </div>
 
       {/* Projects Table View */}
-      <div className="bg-white rounded-2xl shadow-3xs border border-slate-200/80 overflow-hidden">
+      <div className="min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[640px]">
             <thead className="bg-slate-50/80 border-b border-slate-100">
               <tr>
-                <th className="px-6 py-4 font-bold text-xs text-slate-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-xs font-semibold text-slate-600">
                   Project Name
                 </th>
-                <th className="px-6 py-4 font-bold text-xs text-slate-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-xs font-semibold text-slate-600">
                   Status
                 </th>
-                <th className="px-6 py-4 font-bold text-xs text-slate-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-xs font-semibold text-slate-600">
                   Date Added
                 </th>
-                <th className="px-6 py-4 font-bold text-xs text-slate-400 uppercase tracking-wider text-right">
+                <th className="px-6 py-4 text-right text-xs font-semibold text-slate-600">
                   Actions
                 </th>
               </tr>

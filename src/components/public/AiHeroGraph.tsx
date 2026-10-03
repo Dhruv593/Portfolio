@@ -50,6 +50,8 @@ export const AiHeroGraph: React.FC<{ className?: string }> = ({ className = '' }
     let targetMouseX = 0;
     let targetMouseY = 0;
     let isHovered = false;
+    let isVisible = true;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     let nodes: Node[] = [];
     let connections: Connection[] = [];
@@ -256,16 +258,18 @@ export const AiHeroGraph: React.FC<{ className?: string }> = ({ className = '' }
       parentEl.addEventListener('mouseleave', handleMouseLeave);
     }
 
-    const resizeObserver = new ResizeObserver(() => handleResize());
+    const resizeObserver = new ResizeObserver(() => {
+      handleResize();
+      updateMotion();
+    });
     if (canvas.parentElement) {
       resizeObserver.observe(canvas.parentElement);
     }
-    handleResize();
-
     // Render loop
     let globalRotation = 0;
     const render = () => {
-      globalRotation += 0.001;
+      const animate = !reducedMotion.matches && isVisible && !document.hidden;
+      if (animate) globalRotation += 0.001;
       ctx.clearRect(0, 0, width, height);
 
       const centerX = width / 2;
@@ -298,10 +302,10 @@ export const AiHeroGraph: React.FC<{ className?: string }> = ({ className = '' }
 
       // 2. Update Node orbital positions
       nodes.forEach((node) => {
-        node.pulse += node.pulseSpeed;
+        if (animate) node.pulse += node.pulseSpeed;
 
         if (!node.isCenter) {
-          node.currentAngle += node.rotationSpeed;
+          if (animate) node.currentAngle += node.rotationSpeed;
           node.x = centerX + parallaxX + Math.cos(node.currentAngle) * node.orbitRadius;
           node.y = centerY + parallaxY + Math.sin(node.currentAngle) * node.orbitRadius;
         } else {
@@ -337,7 +341,7 @@ export const AiHeroGraph: React.FC<{ className?: string }> = ({ className = '' }
 
       // 4. Update & Draw Data Packets
       packets.forEach((packet) => {
-        packet.progress += packet.speed;
+        if (animate) packet.progress += packet.speed;
 
         const fromNode = nodes.find((n) => n.id === packet.fromNodeId);
         const toNode = nodes.find((n) => n.id === packet.toNodeId);
@@ -412,13 +416,28 @@ export const AiHeroGraph: React.FC<{ className?: string }> = ({ className = '' }
         ctx.fill();
       });
 
-      animationFrameId = requestAnimationFrame(render);
+      if (animate) animationFrameId = requestAnimationFrame(render);
     };
 
-    render();
+    const updateMotion = () => {
+      cancelAnimationFrame(animationFrameId);
+      render();
+    };
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+      updateMotion();
+    });
+    visibilityObserver.observe(canvas);
+    reducedMotion.addEventListener('change', updateMotion);
+    document.addEventListener('visibilitychange', updateMotion);
+    handleResize();
+    updateMotion();
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      visibilityObserver.disconnect();
+      reducedMotion.removeEventListener('change', updateMotion);
+      document.removeEventListener('visibilitychange', updateMotion);
       if (parentEl) {
         parentEl.removeEventListener('mousemove', handleMouseMove);
         parentEl.removeEventListener('mouseleave', handleMouseLeave);

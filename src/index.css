@@ -58,3 +58,14 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #004494;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html, body, :root {
+    scroll-behavior: auto !important;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -45,50 +45,51 @@ export const AdminBlogsTable: React.FC<AdminBlogsTableProps> = ({
   });
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       {/* Top Header & Search Control Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-extrabold tracking-tight text-[#151c27]">
-            Blog Articles
-          </h2>
-          <p className="text-slate-500 text-xs mt-1 font-medium">
-            Manage your articles, thoughts, and technical publications.
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+            Articles
+          </h1>
+          <p className="mt-1 text-sm text-slate-600">
+            Manage published articles and drafts.
           </p>
         </div>
 
         <button
           onClick={onAddBlog}
-          className="px-5 py-2.5 bg-[#0058be] hover:bg-[#2170e4] text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-2 shrink-0"
+          className="flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#0058be] px-4 text-sm font-semibold text-white hover:bg-[#004a9f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0058be]"
         >
           <Plus className="w-4 h-4" />
-          <span>Add New Article</span>
+          <span>Add article</span>
         </button>
       </div>
 
       {/* Filter and Search controls */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-3xs">
+      <div className="flex min-w-0 flex-col items-stretch justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center">
         {/* Search Input */}
         <div className="relative flex-1">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
+            aria-label="Search articles"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search articles by title or tag..."
-            className="w-full pl-10 pr-4 py-2.5 text-xs bg-slate-50 hover:bg-slate-100/70 focus:bg-white rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-slate-800 outline-hidden placeholder:text-slate-400 transition-all font-medium"
+            className="min-h-11 w-full rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 placeholder:text-slate-500 focus:border-[#0058be] focus:bg-white focus:outline-2 focus:outline-[#0058be]"
           />
         </div>
 
         {/* Status Filter Tabs */}
-        <div className="flex bg-slate-100/80 p-1 rounded-xl text-[11px] font-bold self-start sm:self-auto border border-slate-200/60 shadow-3xs">
+        <div className="flex self-start rounded-lg border border-slate-200 bg-slate-100 p-1 text-sm font-medium sm:self-auto">
           {(['All', 'Published', 'Draft'] as const).map((st) => (
             <button
               key={st}
               onClick={() => setStatusFilter(st)}
-              className={`px-3.5 py-1.5 rounded-lg transition-all cursor-pointer ${
+              className={`min-h-10 rounded-md px-3 transition-colors ${
                 statusFilter === st
-                  ? 'bg-white text-[#0058be] shadow-2xs font-extrabold'
+                  ? 'bg-white font-semibold text-[#0058be] shadow-xs'
                   : 'text-slate-500 hover:text-slate-800'
               }`}
             >
@@ -99,11 +100,11 @@ export const AdminBlogsTable: React.FC<AdminBlogsTableProps> = ({
       </div>
 
       {/* Table Container */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-3xs overflow-hidden">
+      <div className="min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full min-w-[720px] border-collapse text-left">
             <thead>
-              <tr className="bg-slate-50/80 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              <tr className="border-b border-slate-100 bg-slate-50 text-xs font-semibold text-slate-600">
                 <th className="py-4 px-6">Article Title</th>
                 <th className="py-4 px-4">Category</th>
                 <th className="py-4 px-4">Status</th>

@@ -24,7 +24,8 @@ import { AdminTab } from '../components/admin/AdminSidebar';
 
 export function usePortfolioData(
   showToast: (text: string, type?: 'success' | 'error' | 'info') => void,
-  viewMode: 'admin' | 'public'
+  viewMode: 'admin' | 'public',
+  isAdminAuthenticated: boolean
 ) {
   const [adminTab, setAdminTabState] = useState<AdminTab>(() => {
     if (typeof window !== 'undefined') {
@@ -226,12 +227,12 @@ export function usePortfolioData(
 
   // Admin-only data is not needed for the public page.
   useEffect(() => {
-    if (viewMode !== 'admin') return;
+    if (viewMode !== 'admin' || !isAdminAuthenticated) return;
     loadCategories();
     loadBlogCategories();
     loadStats();
     loadMongoStatus();
-  }, [viewMode, loadCategories, loadBlogCategories, loadStats, loadMongoStatus]);
+  }, [viewMode, isAdminAuthenticated, loadCategories, loadBlogCategories, loadStats, loadMongoStatus]);
 
   // Blog Handlers
   const handleOpenAddBlog = () => {

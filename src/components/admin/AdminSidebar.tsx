@@ -1,5 +1,5 @@
-import React from 'react';
-import { LayoutDashboard, FolderOpen, BookOpen, Briefcase, Brain, GraduationCap, User, Mail, X, ExternalLink } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { BookOpen, Brain, Briefcase, ExternalLink, FolderOpen, GraduationCap, LayoutDashboard, Mail, User, X } from 'lucide-react';
 
 export type AdminTab = 'overview' | 'projects' | 'blogs' | 'experience' | 'skills' | 'education' | 'profile' | 'messages';
 
@@ -12,116 +12,78 @@ interface AdminSidebarProps {
   setIsMobileOpen: (open: boolean) => void;
 }
 
-export const AdminSidebar: React.FC<AdminSidebarProps> = ({
-  activeTab,
-  setActiveTab,
-  onPublishClick,
-  onSwitchToPublic,
-  isMobileOpen,
-  setIsMobileOpen,
-}) => {
-  const navItems = [
-    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-    { id: 'projects', label: 'Projects', icon: FolderOpen },
-    { id: 'blogs', label: 'Blog Posts', icon: BookOpen },
-    { id: 'experience', label: 'Experience', icon: Briefcase },
-    { id: 'skills', label: 'Skills', icon: Brain },
-    { id: 'education', label: 'Education', icon: GraduationCap },
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'messages', label: 'Messages', icon: Mail },
-  ] as const;
+const groups = [
+  { label: 'Workspace', items: [{ id: 'overview', label: 'Overview', icon: LayoutDashboard }, { id: 'messages', label: 'Messages', icon: Mail }] },
+  { label: 'Content', items: [{ id: 'projects', label: 'Projects', icon: FolderOpen }, { id: 'blogs', label: 'Articles', icon: BookOpen }] },
+  { label: 'About you', items: [{ id: 'experience', label: 'Experience', icon: Briefcase }, { id: 'education', label: 'Education', icon: GraduationCap }, { id: 'skills', label: 'Skills', icon: Brain }, { id: 'profile', label: 'Profile', icon: User }] },
+] as const;
+
+export const AdminSidebar: React.FC<AdminSidebarProps> = ({ activeTab, setActiveTab, onPublishClick, onSwitchToPublic, isMobileOpen, setIsMobileOpen }) => {
+  const drawerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isMobileOpen) return;
+    const returnFocusTo = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    drawerRef.current?.focus();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsMobileOpen(false);
+      if (event.key !== 'Tab' || !drawerRef.current) return;
+      const controls: HTMLElement[] = Array.from(drawerRef.current.querySelectorAll('button:not([disabled]), a[href]')) as HTMLElement[];
+      if (!controls.length) return;
+      if (event.shiftKey && document.activeElement === controls[0]) { event.preventDefault(); controls[controls.length - 1].focus(); }
+      else if (!event.shiftKey && document.activeElement === controls[controls.length - 1]) { event.preventDefault(); controls[0].focus(); }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+      returnFocusTo?.focus();
+    };
+  }, [isMobileOpen, setIsMobileOpen]);
 
   const content = (
-    <div className="h-full flex flex-col py-8 px-6 justify-between bg-white text-slate-800">
-      <div>
-        {/* Brand Header */}
-        <div className="flex justify-between items-start mb-8">
-          <div>
-            <h1 className="text-xl font-black tracking-tight text-[#151c27] flex items-center gap-2">
-              <span className="w-8 h-8 rounded-lg bg-[#0058be] text-white flex items-center justify-center text-sm font-bold shadow-xs">A</span>
-              <span>Admin Console</span>
-            </h1>
-            <p className="text-xs font-semibold text-slate-400 mt-1.5 uppercase tracking-wider">
-              System Management
-            </p>
-          </div>
-          <button
-            onClick={() => setIsMobileOpen(false)}
-            className="lg:hidden p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 cursor-pointer"
-          >
-            <X className="w-5 h-5" />
-          </button>
+    <div className="flex h-full min-h-0 flex-col bg-white">
+      <div className="flex min-h-16 items-center justify-between border-b border-slate-200 px-5">
+        <div className="flex items-center gap-3">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0058be] text-base font-semibold text-white">P</span>
+          <div className="leading-tight"><p className="text-sm font-semibold text-slate-900">Portfolio</p><p className="text-xs text-slate-500">Admin workspace</p></div>
         </div>
-
-        {/* Nav Links */}
-        <nav className="space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-
-            return (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveTab(item.id);
-                  setIsMobileOpen(false);
-                }}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 cursor-pointer text-left ${
-                  isActive
-                    ? 'bg-blue-50 text-[#0058be] shadow-2xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                }`}
-              >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-[#0058be]' : 'text-slate-400'}`} />
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
-        </nav>
+        <button type="button" onClick={() => setIsMobileOpen(false)} aria-label="Close navigation" className="flex h-11 w-11 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-[#0058be] lg:hidden"><X className="h-5 w-5" /></button>
       </div>
 
-      {/* Bottom Actions */}
-      <div className="space-y-3 pt-6 border-t border-slate-100">
-        <button
-          onClick={onSwitchToPublic}
-          className="w-full flex items-center justify-center gap-2 border border-slate-200 text-slate-700 bg-white font-bold text-xs py-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer"
-        >
-          <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-          <span>View Live Portfolio</span>
-        </button>
+      <nav aria-label="Admin navigation" className="min-h-0 flex-1 space-y-6 overflow-y-auto px-3 py-5">
+        {groups.map((group) => (
+          <div key={group.label}>
+            <p className="px-3 pb-2 text-xs font-semibold text-slate-500">{group.label}</p>
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const active = activeTab === item.id;
+                return (
+                  <button key={item.id} type="button" aria-current={active ? 'page' : undefined} onClick={() => { setActiveTab(item.id); setIsMobileOpen(false); }} className={`flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-left text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-[#0058be] ${active ? 'bg-blue-50 text-[#0058be]' : 'text-slate-700 hover:bg-slate-100'}`}>
+                    <Icon className={`h-4 w-4 shrink-0 ${active ? 'text-[#0058be]' : 'text-slate-500'}`} /><span>{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </nav>
 
-        <button
-          onClick={() => {
-            onPublishClick();
-            setIsMobileOpen(false);
-          }}
-          className="w-full bg-[#0058be] hover:bg-[#2170e4] text-white font-bold text-xs py-3 rounded-xl shadow-xs transition-colors cursor-pointer"
-        >
-          Publish Live
-        </button>
+      <div className="space-y-2 border-t border-slate-200 p-3">
+        <button type="button" onClick={() => { onPublishClick(); setIsMobileOpen(false); }} className="min-h-11 w-full rounded-lg bg-[#0058be] px-3 text-sm font-semibold text-white hover:bg-[#004a9f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0058be]">Publish live</button>
+        <button type="button" onClick={onSwitchToPublic} className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-[#0058be]"><ExternalLink className="h-4 w-4" /> View website</button>
       </div>
     </div>
   );
 
-  return (
-    <>
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:block w-64 fixed left-0 top-0 bottom-0 z-40 bg-white border-r border-slate-200">
-        {content}
-      </aside>
-
-      {/* Mobile Drawer Overlay */}
-      {isMobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden flex">
-          <div
-            className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
-            onClick={() => setIsMobileOpen(false)}
-          />
-          <div className="relative w-72 max-w-[80vw] bg-white h-full shadow-2xl z-10">
-            {content}
-          </div>
-        </div>
-      )}
-    </>
-  );
+  return <>
+    <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 border-r border-slate-200 bg-white lg:block">{content}</aside>
+    {isMobileOpen && <div className="fixed inset-0 z-50 lg:hidden">
+      <button type="button" aria-label="Close navigation" onClick={() => setIsMobileOpen(false)} className="absolute inset-0 w-full bg-slate-950/50" />
+      <div ref={drawerRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label="Admin navigation" className="relative h-full w-64 max-w-[85vw] outline-none">{content}</div>
+    </div>}
+  </>;
 };
