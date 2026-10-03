@@ -13,6 +13,9 @@ export const createProjectSchema = z.object({
     status: z.enum(['Published', 'Draft']).default('Published'),
     dateAdded: z.string().optional(),
     image: z.string().optional(),
+    imagePosition: z.string().optional(),
+    imageFit: z.enum(['cover', 'contain', 'fill']).optional(),
+    imageScale: z.number().min(1).optional(),
     description: z.string().optional(),
     longDescription: z.string().optional(),
     githubUrl: z.string().optional(),
@@ -31,6 +34,9 @@ export const updateProjectSchema = z.object({
     category: z.string().optional(),
     status: z.enum(['Published', 'Draft']).optional(),
     image: z.string().optional(),
+    imagePosition: z.string().optional(),
+    imageFit: z.enum(['cover', 'contain', 'fill']).optional(),
+    imageScale: z.number().min(1).optional(),
     description: z.string().optional(),
     longDescription: z.string().optional(),
     githubUrl: z.string().optional(),
@@ -38,6 +44,11 @@ export const updateProjectSchema = z.object({
     tags: z.union([z.array(z.string()), z.string()]).optional(),
     featured: z.boolean().optional(),
   }),
+});
+
+export const projectPositionSchema = z.object({
+  params: z.object({ id: z.string().min(1) }),
+  body: z.object({ position: z.number().int().min(1) }),
 });
 
 export const mongoConfigSchema = z.object({

@@ -7,6 +7,7 @@ export interface Project {
   category: string;
   status: ProjectStatus;
   dateAdded: string;
+  displayOrder?: number;
   image: string;
   imagePosition?: string;
   imageFit?: 'cover' | 'contain' | 'fill';

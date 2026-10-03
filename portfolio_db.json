@@ -1,78 +1,45 @@
 {
   "projects": [
     {
-      "id": "proj-3",
-      "name": "Minimalist Branding",
-      "category": "Identity Design",
-      "status": "Published",
-      "dateAdded": "Nov 04, 2023",
-      "image": "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=800&q=80",
-      "description": "Developing a cohesive visual language for an emerging tech startup, from logo to digital presence.",
-      "longDescription": "Swiss-inspired minimalist brand identity system including typography guidelines, icon sets, brand collateral, and responsive design guidelines.",
-      "githubUrl": "https://github.com/example/brand-identity",
-      "liveUrl": "https://example.com/branding",
-      "tags": [
-        "BRANDING",
-        "VISUAL DESIGN",
-        "FIGMA"
-      ],
-      "featured": true
-    },
-    {
-      "id": "proj-4",
-      "name": "Architecture Portfolio",
-      "category": "Website Design",
-      "status": "Published",
-      "dateAdded": "Aug 15, 2023",
-      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
-      "description": "Cinematic, full-screen architectural showcase featuring ultra-smooth parallax transitions and dark mode toggle.",
-      "longDescription": "High-end portfolio for a renowned architecture firm highlighting physical structures with high-resolution gallery viewports and interactive 3D site plans.",
-      "githubUrl": "https://github.com/example/arch-portfolio",
-      "liveUrl": "https://example.com/architecture",
-      "tags": [
-        "WEB DESIGN",
-        "THREEJS",
-        "PORTFOLIO"
-      ],
-      "featured": false
-    },
-    {
       "id": "proj-5",
-      "name": "AI Code Assistant UI",
-      "category": "Developer Tools",
+      "name": "DocuChat: Retrieval-Augmented AI System",
+      "category": "Generative AI",
       "status": "Published",
       "dateAdded": "Dec 01, 2023",
-      "image": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
-      "description": "Generative AI interface with split-pane code editing, inline diffing, and real-time syntax highlighting.",
-      "longDescription": "Next-generation code generation workspace with interactive prompt chaining, model comparison viewports, and automated test suite creation.",
-      "githubUrl": "https://github.com/example/ai-code-ui",
-      "liveUrl": "https://example.com/aicode",
+      "image": "https://res.cloudinary.com/dwvmd2gwl/image/upload/f_auto/q_auto/w_1600,c_limit/v1791011726/portfolio/qysmmlpjty1idvmbz6rk.png",
+      "description": "A document question-answering application that retrieves relevant passages from uploaded files and uses Gemini to generate grounded answers.",
+      "longDescription": "Built a retrieval-augmented generation pipeline with automated document chunking, embeddings, and semantic search in Pinecone. Supports PDF, DOCX, and TXT ingestion. A FastAPI backend handles uploads, indexing, and queries, while a React interface lets users explore their documents. The frontend was deployed on Vercel and the Dockerized backend on Render.",
+      "githubUrl": "https://github.com/Dhruv593/Custom-Rag-Pipeline",
+      "liveUrl": "",
       "tags": [
-        "AI",
+        "RAG",
+        "GEMINI",
+        "PINECONE",
+        "FASTAPI",
         "REACT",
-        "MONACO",
-        "TAILWIND"
+        "DOCKER"
       ],
       "featured": true
     },
     {
-      "id": "proj-6",
-      "name": "FinTech Mobile Wallet",
-      "category": "Mobile App",
+      "id": "proj-1791011854700",
+      "name": "Tatparya",
+      "category": "AI & Data Analytics",
       "status": "Published",
-      "dateAdded": "Jan 10, 2024",
-      "image": "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80",
-      "description": "Cross-border payment app with biometrics authentication, virtual card management, and expense categorizer.",
-      "longDescription": "Secure mobile banking application with instant crypto-to-fiat conversion, peer-to-peer transfers, and visual monthly budgeting insights.",
-      "githubUrl": "https://github.com/example/fintech-wallet",
-      "liveUrl": "https://example.com/wallet",
+      "dateAdded": "Oct 03, 2026",
+      "image": "https://res.cloudinary.com/dwvmd2gwl/image/upload/f_auto/q_auto/w_1600,c_limit/v1791011827/portfolio/nxzju0gfzddhuwyknl3m.png",
+      "description": "A business analytics workspace that turns uploaded data and plain-language questions into clear findings, charts, recommendations, and shareable reports.",
+      "longDescription": "Tatparya helps users move from a raw business file to a decision they can explain. Users can upload CSV, Excel, JSON, or Parquet files, review columns and data quality, and ask questions about performance, trends, customers, products, or regions in everyday language. The workspace presents answers alongside supporting visualizations, lets users investigate follow-up questions, and brings findings and recommendations into a downloadable PDF report.",
+      "githubUrl": "",
+      "liveUrl": "https://insight-forge-frontend-inky.vercel.app/",
       "tags": [
-        "FINTECH",
-        "MOBILE APP",
-        "IOS",
-        "ANDROID"
+        "AI ANALYTICS",
+        "BUSINESS INTELLIGENCE",
+        "NATURAL LANGUAGE QUERIES",
+        "DATA VISUALIZATION",
+        "REPORTING"
       ],
-      "featured": false
+      "featured": true
     }
   ],
   "blogs": [
@@ -100,29 +67,20 @@
     {
       "id": "exp-1",
       "role": "AI Engineer",
-      "company": "Schbang",
-      "period": "2026 - Present",
+      "company": "Advize",
+      "period": "May, 2026 - Present",
       "isCurrent": true,
-      "location": "India",
-      "description": "Leading the product design team in creating a next-generation SaaS platform. Focused on scalable design systems and mentoring junior designers while collaborating closely with the engineering team to ensure high-fidelity implementation."
+      "location": "Ahmedabad, India",
+      "description": "Develop LLM workflows for adapting Meta ad creatives into brand-specific variations and automating creative iterations. Built prompt-driven cold-email generation and Google Ads keyword research workflows. Designed an API registry that maps natural-language requests to backend endpoints and sequences the required actions."
     },
     {
       "id": "exp-2",
-      "role": "UI Developer & Design Engineer",
-      "company": "Digital Craft Studio",
-      "period": "2018 — 2021",
+      "role": "Full Stack Intern",
+      "company": "WeClocks Technology Pvt. Ltd.",
+      "period": "January 2025 – April 2025",
       "isCurrent": false,
-      "location": "Austin, TX",
-      "description": "Bridged the gap between high-level designs and functional code. Developed responsive, accessible web components and led the migration of legacy projects to modern frontend frameworks."
-    },
-    {
-      "id": "exp-3",
-      "role": "Design Intern",
-      "company": "Creative Flow Agency",
-      "period": "2017 — 2018",
-      "isCurrent": false,
-      "location": "New York, NY",
-      "description": "Assisted in the creation of visual assets for client campaigns and supported the design team in wireframing user flows for mobile applications."
+      "location": "Surat, India",
+      "description": "Built a Construction Equipment Rental Management System with a MERN application, Express REST APIs, JWT authentication, and role-based admin access. Designed a MySQL schema and dashboard for managing equipment, rentals, inventory, deposits, and transactions."
     }
   ],
   "education": [
@@ -193,11 +151,11 @@
   "profile": [
     {
       "name": "Dhruv Lad",
-      "title": "AI Engineer | MLOps",
+      "title": "AI Engineer | Data Scientist",
       "subtitle": "Manage your work and showcase your creations",
       "avatarUrl": "https://res.cloudinary.com/dwvmd2gwl/image/upload/f_auto/q_auto/w_512,c_limit/v1790946279/portfolio/yale7wzpfdwhadgb7ewp.jpg",
-      "bioParagraph1": "With over 8 years in the digital space, I've learned that great design isn't just about how things look—it's about how they function. My journey started in traditional graphic design before moving into the world of UI/UX and Frontend Engineering.",
-      "bioParagraph2": "I believe in building systems that are accessible, performant, and delightful to use. I thrive at the intersection of aesthetic precision and technical excellence, ensuring that every pixel serves a purpose in the user journey.",
+      "bioParagraph1": "I’m an AI engineer and M.Tech Data Science student focused on turning complex data into useful products. My work spans retrieval-augmented generation, language model workflows, computer vision, analytics, and full-stack development. I enjoy building systems that make information easier to explore and decisions easier to explain.",
+      "bioParagraph2": "I work with Python, React, FastAPI, machine learning frameworks, and cloud tools to take ideas from prototype to deployed application. My projects include document question answering, AI-assisted analytics, and multimodal prediction. I’m an AWS Academy Cloud Foundations graduate and was a Top 5 finalist among more than 200 teams at IIIT Surat’s DevHeat Hackathon.",
       "email": "dhruvlad.work@gmail.com",
       "location": "India",
       "github": "https://github.com/Dhruv593",
@@ -212,15 +170,6 @@
     }
   ],
   "messages": [
-    {
-      "id": "msg-1791010551932-adxs4",
-      "name": "Dhruv Lad",
-      "email": "cocdhruv4444@gmail.com",
-      "subject": "Project Inquiry",
-      "message": "Hello There",
-      "createdAt": "2026-10-03T06:55:51.932Z",
-      "read": false
-    },
     {
       "id": "msg-1785915439829-gl2lz",
       "name": "Dhruv Lad",
@@ -282,6 +231,15 @@
       "subject": "Project Inquiry",
       "message": "Hello",
       "createdAt": "2026-08-22T06:45:06.653Z",
+      "read": false
+    },
+    {
+      "id": "msg-1791010551932-adxs4",
+      "name": "Dhruv Lad",
+      "email": "cocdhruv4444@gmail.com",
+      "subject": "Project Inquiry",
+      "message": "Hello There",
+      "createdAt": "2026-10-03T06:55:51.932Z",
       "read": false
     }
   ],

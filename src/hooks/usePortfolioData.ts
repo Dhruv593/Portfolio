@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { portfolioApi } from '../api/portfolioApi';
 import {
   Project,
@@ -13,7 +13,6 @@ import {
 } from '../types';
 import { isSectionVisible } from '../utils/sectionVisibility';
 import {
-  initialProjects,
   initialBlogs,
   initialExperience,
   initialEducation,
@@ -55,7 +54,12 @@ export function usePortfolioData(
   const [totalProjectsCount, setTotalProjectsCount] = useState(0);
 
   // Data States
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [adminProjects, setAdminProjects] = useState<Project[]>([]);
+  const [projectsError, setProjectsError] = useState('');
+  const [projectsLoading, setProjectsLoading] = useState(true);
+  const [projectsReordering, setProjectsReordering] = useState(false);
+  const projectsRequestId = useRef(0);
   const [categories, setCategories] = useState<string[]>([]);
   const [blogs, setBlogs] = useState<BlogPost[]>(initialBlogs);
   const [blogCategories, setBlogCategories] = useState<string[]>([]);
@@ -65,11 +69,11 @@ export function usePortfolioData(
   const [profile, setProfile] = useState<ProfileData>(initialProfile);
   const [visibilitySaving, setVisibilitySaving] = useState(false);
   const [stats, setStats] = useState<DashboardStats>({
-    totalProjects: 24,
-    liveViewers: '1.2k',
-    recentActivity: '+4',
-    publishedCount: 18,
-    draftCount: 6,
+    totalProjects: 0,
+    liveViewers: '—',
+    recentActivity: '—',
+    publishedCount: 0,
+    draftCount: 0,
   });
 
   const [mongoConfig, setMongoConfig] = useState<MongoConfig>({
@@ -83,11 +87,12 @@ export function usePortfolioData(
   const [isBlogModalOpen, setIsBlogModalOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
   const [isMongoModalOpen, setIsMongoModalOpen] = useState(false);
-  const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // Loaders
   const loadProjects = useCallback(async () => {
+    const requestId = ++projectsRequestId.current;
+    setProjectsLoading(true);
     try {
       const res = await portfolioApi.getProjects({
         search: searchQuery,
@@ -95,17 +100,43 @@ export function usePortfolioData(
         page: currentPage,
         limit: 10,
       });
-      const projectList = res.projects || res.data || [];
-      const pages = res.totalPages || res.meta?.totalPages || 1;
-      const totalCount = res.total || res.meta?.total || projectList.length;
+      const projectList = res.projects ?? res.data ?? [];
+      const pages = res.totalPages ?? res.meta?.totalPages ?? 1;
+      const totalCount = res.total ?? res.meta?.total ?? projectList.length;
 
-      setProjects(projectList);
+      if (requestId !== projectsRequestId.current) return;
+      if (currentPage > pages) {
+        setCurrentPage(pages);
+        return;
+      }
+      setAdminProjects(projectList);
       setTotalPages(pages);
       setTotalProjectsCount(totalCount);
-    } catch {
-      // Fallback local state if network drops
+      setProjectsError('');
+    } catch (error) {
+      if (requestId === projectsRequestId.current) {
+        setProjectsError(error instanceof Error ? error.message : 'Could not load projects.');
+      }
+    } finally {
+      if (requestId === projectsRequestId.current) setProjectsLoading(false);
     }
   }, [searchQuery, statusFilter, currentPage]);
+
+  const loadPublicProjects = useCallback(async () => {
+    try {
+      const first = await portfolioApi.getProjects({ page: 1, limit: 100 });
+      const firstPage = first.projects ?? first.data ?? [];
+      const pageCount = first.totalPages ?? first.meta?.totalPages ?? 1;
+      const remaining = await Promise.all(
+        Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) =>
+          portfolioApi.getProjects({ page: index + 2, limit: 100 })
+        )
+      );
+      setProjects([...firstPage, ...remaining.flatMap((res) => res.projects ?? res.data ?? [])]);
+    } catch {
+      // Keep the last successful public list if a refresh fails.
+    }
+  }, []);
 
   const loadBlogs = useCallback(async () => {
     try {
@@ -213,8 +244,13 @@ export function usePortfolioData(
 
   // Project filters should only reload projects, not every portfolio endpoint.
   useEffect(() => {
+    if (viewMode !== 'admin' || !isAdminAuthenticated) return;
     loadProjects();
-  }, [loadProjects]);
+  }, [viewMode, isAdminAuthenticated, loadProjects]);
+
+  useEffect(() => {
+    loadPublicProjects();
+  }, [loadPublicProjects]);
 
   // Content displayed on the public portfolio.
   useEffect(() => {
@@ -294,7 +330,7 @@ export function usePortfolioData(
     setIsProjectModalOpen(true);
   };
 
-  const handleSaveProject = async (projectData: Partial<Project>) => {
+  const handleSaveProject = async (projectData: Partial<Project>): Promise<void> => {
     try {
       if (projectData.id) {
         await portfolioApi.updateProject(projectData.id, projectData);
@@ -303,11 +339,16 @@ export function usePortfolioData(
         await portfolioApi.createProject(projectData);
         showToast('New project added to portfolio!');
       }
-      loadProjects();
-      loadCategories();
-      loadStats();
-    } catch {
-      showToast('Error saving project', 'error');
+      setSearchQuery('');
+      setStatusFilter('All');
+      setCurrentPage(1);
+      setAdminTab('projects');
+      await Promise.all([loadPublicProjects(), loadCategories(), loadStats()]);
+      if (!searchQuery && statusFilter === 'All' && currentPage === 1) await loadProjects();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      showToast(`Could not save project: ${message}`, 'error');
+      throw error;
     }
   };
 
@@ -317,6 +358,7 @@ export function usePortfolioData(
       await portfolioApi.deleteProject(projectId);
       showToast('Project deleted', 'info');
       loadProjects();
+      loadPublicProjects();
       loadStats();
     } catch {
       showToast('Error deleting project', 'error');
@@ -329,9 +371,27 @@ export function usePortfolioData(
       await portfolioApi.updateProject(project.id, { status: newStatus });
       showToast(`Project status changed to ${newStatus}`);
       loadProjects();
+      loadPublicProjects();
       loadStats();
     } catch {
       showToast('Failed to change status', 'error');
+    }
+  };
+
+  const handleSetProjectPosition = async (project: Project, position: number) => {
+    if (projectsReordering) return;
+    setProjectsReordering(true);
+    try {
+      await portfolioApi.setProjectPosition(project.id, position);
+      const destinationPage = Math.ceil(position / 10);
+      if (destinationPage !== currentPage) setCurrentPage(destinationPage);
+      else await loadProjects();
+      await loadPublicProjects();
+      showToast(`${project.name} moved to position ${position}`);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Could not change project order', 'error');
+    } finally {
+      setProjectsReordering(false);
     }
   };
 
@@ -489,6 +549,7 @@ export function usePortfolioData(
       if (res.success) {
         showToast('Portfolio data reset to initial defaults');
         loadProjects();
+        loadPublicProjects();
         loadExperience();
         loadEducation();
         loadSkills();
@@ -512,6 +573,11 @@ export function usePortfolioData(
     totalPages,
     totalProjectsCount,
     projects,
+    adminProjects,
+    projectsError,
+    projectsLoading,
+    projectsReordering,
+    loadProjects,
     categories,
     loadCategories,
     handleAddCategory,
@@ -534,8 +600,6 @@ export function usePortfolioData(
     editingBlog,
     isMongoModalOpen,
     setIsMongoModalOpen,
-    isPublishModalOpen,
-    setIsPublishModalOpen,
     isMobileSidebarOpen,
     setIsMobileSidebarOpen,
     handleOpenAddBlog,
@@ -548,6 +612,7 @@ export function usePortfolioData(
     handleSaveProject,
     handleDeleteProject,
     handleToggleStatus,
+    handleSetProjectPosition,
     handleAddExperience,
     handleUpdateExperience,
     handleDeleteExperience,

@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env.config.js';
 import { dbStore } from '../db/jsonStore.js';
+import { dbService } from '../db/mongodb.js';
 
 export class AdminService {
   authenticate(password: string): { success: boolean; token?: string; error?: string } {
@@ -18,15 +19,19 @@ export class AdminService {
     return { success: false, error: 'Incorrect admin passcode' };
   }
 
-  getDashboardStats() {
-    const totalProjects = dbStore.projects.length;
-    const publishedCount = dbStore.projects.filter((p) => p.status === 'Published').length;
-    const draftCount = dbStore.projects.filter((p) => p.status === 'Draft').length;
+  async getDashboardStats() {
+    const db = dbService.getDb();
+    const projects = db
+      ? await db.collection('projects').find({}, { projection: { status: 1 } }).toArray()
+      : dbStore.projects;
+    const totalProjects = projects.length;
+    const publishedCount = projects.filter((p) => p.status === 'Published').length;
+    const draftCount = projects.filter((p) => p.status === 'Draft').length;
 
     return {
       totalProjects,
-      liveViewers: '1.2k',
-      recentActivity: `+${publishedCount}`,
+      liveViewers: '—',
+      recentActivity: '—',
       publishedCount,
       draftCount,
     };

@@ -1,17 +1,6 @@
-import React, { useState } from 'react';
-import {
-  Plus,
-  CheckCircle2,
-  Clock,
-  Edit2,
-  Trash2,
-  ChevronLeft,
-  ChevronRight,
-  ExternalLink,
-  Search,
-  Filter,
-} from 'lucide-react';
-import { Project, DashboardStats, ExperienceItem } from '../../types';
+import React from 'react';
+import { ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react';
+import { DashboardStats, Project } from '../../types';
 import { normalizeImageUrl } from '../../utils/imageUtils';
 
 interface AdminProjectsTableProps {
@@ -21,292 +10,64 @@ interface AdminProjectsTableProps {
   totalPages: number;
   setCurrentPage: (page: number) => void;
   stats: DashboardStats;
-  experience: ExperienceItem[];
   onAddNewProject: () => void;
   onEditProject: (project: Project) => void;
   onDeleteProject: (projectId: string) => void;
   onToggleStatus: (project: Project) => void;
-  onViewAllExperience: () => void;
+  onSetPosition: (project: Project, position: number) => void;
   statusFilter: string;
   setStatusFilter: (status: string) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  loading: boolean;
+  reordering: boolean;
+  error: string;
+  onRetry: () => void;
 }
 
 export const AdminProjectsTable: React.FC<AdminProjectsTableProps> = ({
-  projects,
-  totalProjectsCount,
-  currentPage,
-  totalPages,
-  setCurrentPage,
-  stats,
-  experience,
-  onAddNewProject,
-  onEditProject,
-  onDeleteProject,
-  onToggleStatus,
-  onViewAllExperience,
-  statusFilter,
-  setStatusFilter,
-  searchQuery,
-  setSearchQuery,
+  projects, totalProjectsCount, currentPage, totalPages, setCurrentPage, stats,
+  onAddNewProject, onEditProject, onDeleteProject, onToggleStatus, onSetPosition,
+  statusFilter, setStatusFilter, searchQuery, setSearchQuery, loading, reordering, error, onRetry,
 }) => {
-  return (
-    <div className="min-w-0 space-y-6">
-      {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-            Projects
-          </h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Manage published work and drafts in one place.
-          </p>
-        </div>
-        <button
-          onClick={onAddNewProject}
-          className="flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#0058be] px-4 text-sm font-semibold text-white hover:bg-[#004a9f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0058be]"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add project</span>
-        </button>
-      </div>
+  const filtered = Boolean(searchQuery || statusFilter !== 'All');
+  const clearFilters = () => {
+    setSearchQuery(''); setStatusFilter('All'); setCurrentPage(1);
+  };
 
-      <div className="grid gap-3 sm:grid-cols-3">
-        {[{ label: 'Total projects', value: stats.totalProjects }, { label: 'Published', value: stats.publishedCount }, { label: 'Drafts', value: stats.draftCount }].map(({ label, value }) => (
-          <div key={label} className="rounded-xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-600">{label}</p>
-            <p className="mt-2 text-2xl font-semibold tabular-nums text-slate-900">{value}</p>
-          </div>
-        ))}
-      </div>
+  const actions = (project: Project) => <div className="flex flex-wrap items-center gap-1 text-sm">
+    <button type="button" onClick={() => onEditProject(project)} className="min-h-11 rounded-lg px-3 font-medium text-[#0058be] hover:bg-blue-50">Edit</button>
+    {project.liveUrl && <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-lg px-3 font-medium text-slate-700 hover:bg-slate-100">Visit</a>}
+    <button type="button" onClick={() => onDeleteProject(project.id)} className="min-h-11 rounded-lg px-3 font-medium text-red-700 hover:bg-red-50">Delete</button>
+  </div>;
 
-      {/* Filter and Search Bar for Table */}
-      <div className="flex min-w-0 flex-col items-stretch justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center">
-        <div className="relative min-w-0 flex-1">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            aria-label="Search projects"
-            placeholder="Search projects by title, category, or tag..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="min-h-11 w-full rounded-lg border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 placeholder:text-slate-500 focus:border-[#0058be] focus:bg-white focus:outline-2 focus:outline-[#0058be]"
-          />
-        </div>
+  const statusButton = (project: Project) => <button type="button" onClick={() => onToggleStatus(project)} aria-label={`Change ${project.name} from ${project.status} to ${project.status === 'Published' ? 'Draft' : 'Published'}`} className={`min-h-11 rounded-lg px-3 text-sm font-medium ${project.status === 'Published' ? 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>{project.status}</button>;
 
-        <div className="flex shrink-0 items-center gap-2.5">
-          <label htmlFor="project-status-filter" className="text-sm font-medium text-slate-600">Status</label>
-          <select
-            id="project-status-filter"
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="min-h-11 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700 focus:border-[#0058be] focus:outline-2 focus:outline-[#0058be]"
-          >
-            <option value="All">All Projects</option>
-            <option value="Published">Published</option>
-            <option value="Draft">Draft</option>
-          </select>
-        </div>
-      </div>
+  const positionControl = (project: Project, index: number) => <label className="inline-flex items-center gap-2 text-sm text-slate-600">
+    <span className="sr-only">Position for {project.name}</span>
+    <select aria-label={`Position for ${project.name}`} value={(currentPage - 1) * 10 + index + 1} onChange={(event) => onSetPosition(project, Number(event.target.value))} disabled={filtered || reordering} title={filtered ? 'Clear filters to change project order' : 'Change project position'} className="min-h-11 rounded-lg border border-slate-300 bg-white px-2 text-sm text-slate-800 disabled:opacity-50">
+      {Array.from({ length: totalProjectsCount }, (_, position) => <option key={position} value={position + 1}>{position + 1}</option>)}
+    </select>
+  </label>;
 
-      {/* Projects Table View */}
-      <div className="min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[640px]">
-            <thead className="bg-slate-50/80 border-b border-slate-100">
-              <tr>
-                <th className="px-6 py-4 text-xs font-semibold text-slate-600">
-                  Project Name
-                </th>
-                <th className="px-6 py-4 text-xs font-semibold text-slate-600">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-xs font-semibold text-slate-600">
-                  Date Added
-                </th>
-                <th className="px-6 py-4 text-right text-xs font-semibold text-slate-600">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {projects.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-xs font-medium text-slate-400">
-                    No projects found matching your search criteria.
-                  </td>
-                </tr>
-              ) : (
-                projects.map((project) => (
-                  <tr
-                    key={project.id}
-                    className="hover:bg-slate-50/50 transition-colors group"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-10 rounded-lg bg-slate-50 overflow-hidden shrink-0 border border-slate-150">
-                          <img
-                            src={normalizeImageUrl(project.image)}
-                            alt={project.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                          />
-                        </div>
-                        <div>
-                          <p className="font-bold text-xs text-[#151c27] group-hover:text-[#0058be] transition-colors">
-                            {project.name}
-                          </p>
-                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">
-                            {project.category}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => onToggleStatus(project)}
-                        className="cursor-pointer"
-                        title="Click to toggle Published/Draft"
-                      >
-                        {project.status === 'Published' ? (
-                          <span className="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1 hover:bg-emerald-100 transition-colors">
-                            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                            Published
-                          </span>
-                        ) : (
-                          <span className="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1 hover:bg-slate-200 transition-colors">
-                            <Clock className="w-3 h-3 text-slate-500" />
-                            Draft
-                          </span>
-                        )}
-                      </button>
-                    </td>
-                    <td className="px-6 py-4 text-xs text-slate-500 font-medium">
-                      {project.dateAdded}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-1 px-2">
-                        {project.liveUrl && (
-                          <a
-                            href={project.liveUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-[#0058be] rounded-lg transition-colors cursor-pointer"
-                            title="Preview live"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </a>
-                        )}
-                        <button
-                          onClick={() => onEditProject(project)}
-                          className="p-1.5 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-lg transition-all cursor-pointer"
-                          title="Edit project"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => onDeleteProject(project.id)}
-                          className="p-1.5 hover:bg-rose-50 text-slate-400 hover:text-rose-600 rounded-lg transition-all cursor-pointer"
-                          title="Delete project"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination Controls */}
-        <div className="px-6 py-4 bg-white border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-3">
-          <p className="text-xs text-slate-500 font-semibold">
-            Showing {projects.length === 0 ? 0 : (currentPage - 1) * 10 + 1}-
-            {Math.min(currentPage * 10, totalProjectsCount)} of {totalProjectsCount} projects
-          </p>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-              className="px-3.5 py-1.5 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" />
-              Previous
-            </button>
-            <button
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage >= totalPages}
-              className="px-3.5 py-1.5 bg-[#0058be] text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1"
-            >
-              Next
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Asymmetric Bottom Grid: Experience Timeline + Portfolio Analytics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Experience Timeline Preview */}
-        <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xs border border-slate-200/80 flex flex-col justify-between">
-          <div>
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-[#151c27]">
-                Experience Timeline
-              </h3>
-              <button
-                onClick={onViewAllExperience}
-                className="text-[#0058be] text-sm font-semibold hover:underline cursor-pointer"
-              >
-                View All
-              </button>
-            </div>
-            <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
-              {experience.slice(0, 3).map((item, idx) => (
-                <div key={item.id} className="relative">
-                  <div
-                    className={`absolute -left-[23px] top-1.5 w-3 h-3 rounded-full ring-4 ring-white ${
-                      idx === 0 ? 'bg-[#0058be]' : 'bg-slate-300'
-                    }`}
-                  />
-                  <p className="font-semibold text-sm text-[#151c27]">
-                    {item.role}
-                  </p>
-                  <p className="text-xs text-[#424754] font-medium">
-                    {item.company} • {item.period}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Portfolio Analytics Card */}
-        <div className="bg-[#2170e4] text-white p-6 sm:p-8 rounded-2xl shadow-lg relative overflow-hidden flex flex-col justify-between">
-          <div className="relative z-10">
-            <h3 className="text-2xl font-bold mb-2">Portfolio Analytics</h3>
-            <p className="text-sm opacity-90 mb-6 max-w-md font-normal">
-              Your projects have seen a 15% increase in engagement this week. Great work!
-            </p>
-            <div className="flex items-end gap-2.5 h-24 pt-2">
-              <div className="flex-1 bg-white/20 hover:bg-white/30 transition-colors rounded-t-xs h-[40%]" title="Mon" />
-              <div className="flex-1 bg-white/20 hover:bg-white/30 transition-colors rounded-t-xs h-[60%]" title="Tue" />
-              <div className="flex-1 bg-white/40 hover:bg-white/50 transition-colors rounded-t-xs h-[80%]" title="Wed" />
-              <div className="flex-1 bg-white/60 hover:bg-white/70 transition-colors rounded-t-xs h-[50%]" title="Thu" />
-              <div className="flex-1 bg-white/90 hover:bg-white transition-colors rounded-t-xs h-[100%]" title="Fri" />
-              <div className="flex-1 bg-white/40 hover:bg-white/50 transition-colors rounded-t-xs h-[70%]" title="Sat" />
-              <div className="flex-1 bg-white/20 hover:bg-white/30 transition-colors rounded-t-xs h-[40%]" title="Sun" />
-            </div>
-          </div>
-          {/* Ambient Glow */}
-          <div className="absolute -right-12 -bottom-12 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-        </div>
-      </div>
+  return <div className="min-w-0 space-y-5">
+    <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div><h1 className="text-2xl font-semibold tracking-tight text-slate-900">Projects</h1><p className="mt-1 text-sm text-slate-600">{stats.publishedCount} published · {stats.draftCount} drafts</p></div>
+      <button type="button" onClick={onAddNewProject} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#0058be] px-4 text-sm font-semibold text-white hover:bg-[#004a9f]"><Plus className="h-4 w-4" /> Add project</button>
+    </header>
+    <p className="text-sm text-slate-600">Set a position to arrange projects. The first three published projects appear on the homepage.</p>
+    <div className="flex flex-col gap-3 sm:flex-row">
+      <label className="relative min-w-0 flex-1"><span className="sr-only">Search projects</span><Search className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-slate-500" /><input type="search" value={searchQuery} onChange={(event) => { setSearchQuery(event.target.value); setCurrentPage(1); }} placeholder="Search projects" className="min-h-11 w-full rounded-lg border border-slate-300 bg-white pl-10 pr-3 text-sm text-slate-900 focus:outline-2 focus:outline-[#0058be]" /></label>
+      <label className="flex items-center gap-2 text-sm text-slate-700"><span>Status</span><select value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setCurrentPage(1); }} className="min-h-11 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-sm sm:flex-none"><option value="All">All</option><option value="Published">Published</option><option value="Draft">Draft</option></select></label>
+      {filtered && <button type="button" onClick={clearFilters} className="min-h-11 rounded-lg px-3 text-sm font-medium text-[#0058be] hover:bg-blue-50">Clear filters</button>}
     </div>
-  );
+    {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-900"><span>Projects could not load: {error}</span><button type="button" onClick={onRetry} className="min-h-11 rounded-lg px-3 font-semibold hover:bg-red-100">Try again</button></div>}
+    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+      {loading ? <p role="status" className="p-8 text-center text-sm text-slate-600">Loading projects…</p> : error ? <p className="p-8 text-center text-sm text-slate-600">Project list unavailable. Try again above.</p> : projects.length === 0 ? <div className="p-8 text-center"><p className="text-base font-semibold text-slate-900">{filtered ? 'No matching projects' : 'No projects yet'}</p><p className="mt-1 text-sm text-slate-600">{filtered ? 'Try another search or clear the filters.' : 'Add a project to show your work.'}</p><button type="button" onClick={filtered ? clearFilters : onAddNewProject} className="mt-3 min-h-11 rounded-lg px-4 text-sm font-semibold text-[#0058be] hover:bg-blue-50">{filtered ? 'Clear filters' : 'Add project'}</button></div> : <>
+        <div className="divide-y divide-slate-100 md:hidden">{projects.map((project, index) => <article key={project.id} className="space-y-3 p-4"><div className="flex items-start gap-3">{project.image && <img src={normalizeImageUrl(project.image)} alt="" className="h-14 w-20 shrink-0 rounded-lg object-cover" />}<div className="min-w-0 flex-1"><h2 className="break-words text-base font-semibold text-slate-900">{project.name}</h2><p className="text-sm text-slate-600">{project.category}</p></div></div><div className="flex flex-wrap items-center gap-3"><span className="text-sm text-slate-600">Position</span>{positionControl(project, index)}{statusButton(project)}</div>{actions(project)}</article>)}</div>
+        <div className="hidden overflow-x-auto md:block"><table className="w-full min-w-[720px] text-left text-sm"><thead className="border-b border-slate-200 bg-slate-50 text-slate-600"><tr><th className="px-4 py-3 font-semibold">Position</th><th className="px-4 py-3 font-semibold">Project</th><th className="px-4 py-3 font-semibold">Status</th><th className="px-4 py-3 font-semibold">Actions</th></tr></thead><tbody className="divide-y divide-slate-100">{projects.map((project, index) => <tr key={project.id}><td className="px-4 py-3">{positionControl(project, index)}</td><td className="px-4 py-3"><div className="flex items-center gap-3">{project.image && <img src={normalizeImageUrl(project.image)} alt="" className="h-12 w-16 shrink-0 rounded-lg object-cover" />}<div className="min-w-0"><p className="break-words font-semibold text-slate-900">{project.name}</p><p className="text-slate-600">{project.category}</p></div></div></td><td className="px-4 py-3">{statusButton(project)}</td><td className="px-4 py-3">{actions(project)}</td></tr>)}</tbody></table></div>
+      </>}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-4 py-3 text-sm text-slate-600"><span>{totalProjectsCount} {totalProjectsCount === 1 ? 'project' : 'projects'} · Page {currentPage} of {totalPages}</span><div className="flex gap-2"><button type="button" onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage <= 1} className="inline-flex min-h-11 items-center gap-1 rounded-lg border border-slate-300 px-3 font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40"><ChevronLeft className="h-4 w-4" /> Previous</button><button type="button" onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage >= totalPages} className="inline-flex min-h-11 items-center gap-1 rounded-lg border border-slate-300 px-3 font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-40">Next <ChevronRight className="h-4 w-4" /></button></div></div>
+    </div>
+  </div>;
 };

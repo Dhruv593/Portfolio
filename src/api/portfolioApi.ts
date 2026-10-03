@@ -40,6 +40,10 @@ export const portfolioApi = {
     return apiClient.put<{ success: boolean; project?: Project; data?: { project: Project } }>(`/projects/${id}`, project);
   },
 
+  setProjectPosition: async (id: string, position: number) => {
+    return apiClient.put<{ success: boolean }>(`/projects/${id}/position`, { position });
+  },
+
   deleteProject: async (id: string) => {
     return apiClient.delete<{ success: boolean; message?: string }>(`/projects/${id}`);
   },

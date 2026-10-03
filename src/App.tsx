@@ -19,7 +19,6 @@ const AdminMessagesTable = React.lazy(() => import('./components/admin/AdminMess
 const ProjectModal = React.lazy(() => import('./components/admin/modals/ProjectModal').then((m) => ({ default: m.ProjectModal })));
 const BlogModal = React.lazy(() => import('./components/admin/modals/BlogModal').then((m) => ({ default: m.BlogModal })));
 const MongoDbModal = React.lazy(() => import('./components/admin/modals/MongoDbModal').then((m) => ({ default: m.MongoDbModal })));
-const PublishModal = React.lazy(() => import('./components/admin/modals/PublishModal').then((m) => ({ default: m.PublishModal })));
 const AdminAuthModal = React.lazy(() => import('./components/admin/modals/AdminAuthModal').then((m) => ({ default: m.AdminAuthModal })));
 
 export default function App() {
@@ -48,8 +47,12 @@ export default function App() {
     totalPages,
     totalProjectsCount,
     projects,
+    adminProjects,
+    projectsError,
+    projectsLoading,
+    projectsReordering,
+    loadProjects,
     categories,
-    handleAddCategory,
     blogs,
     blogCategories,
     handleAddBlogCategory,
@@ -67,8 +70,6 @@ export default function App() {
     editingBlog,
     isMongoModalOpen,
     setIsMongoModalOpen,
-    isPublishModalOpen,
-    setIsPublishModalOpen,
     isMobileSidebarOpen,
     setIsMobileSidebarOpen,
     handleOpenAddBlog,
@@ -81,6 +82,7 @@ export default function App() {
     handleSaveProject,
     handleDeleteProject,
     handleToggleStatus,
+    handleSetProjectPosition,
     handleAddExperience,
     handleUpdateExperience,
     handleDeleteExperience,
@@ -126,7 +128,6 @@ export default function App() {
           <AdminSidebar
             activeTab={adminTab}
             setActiveTab={setAdminTab}
-            onPublishClick={() => setIsPublishModalOpen(true)}
             onSwitchToPublic={handleSwitchToPublic}
             isMobileOpen={isMobileSidebarOpen}
             setIsMobileOpen={setIsMobileSidebarOpen}
@@ -138,7 +139,6 @@ export default function App() {
               activeTab={adminTab}
               mongoConfig={mongoConfig}
               onOpenMongoModal={() => setIsMongoModalOpen(true)}
-              onOpenSettingsModal={() => setIsMongoModalOpen(true)}
               onToggleMobileSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
               onSwitchToPublic={handleSwitchToPublic}
               onLogout={handleAdminLogout}
@@ -149,16 +149,11 @@ export default function App() {
               {adminTab === 'overview' && (
                 <AdminOverview
                   profile={profile}
-                  projects={projects}
                   blogs={blogs}
-                  experience={experience}
-                  education={education}
-                  skills={skills}
                   stats={stats}
                   mongoConfig={mongoConfig}
                   setActiveTab={setAdminTab}
                   onAddNewProject={handleOpenAddProject}
-                  onAddBlog={handleOpenAddBlog}
                   onOpenMongoModal={() => setIsMongoModalOpen(true)}
                   onUpdateSectionVisibility={handleUpdateSectionVisibility}
                   visibilitySaving={visibilitySaving}
@@ -168,22 +163,25 @@ export default function App() {
 
               {adminTab === 'projects' && (
                 <AdminProjectsTable
-                  projects={projects}
+                  projects={adminProjects}
                   totalProjectsCount={totalProjectsCount}
                   currentPage={currentPage}
                   totalPages={totalPages}
                   setCurrentPage={setCurrentPage}
                   stats={stats}
-                  experience={experience}
                   onAddNewProject={handleOpenAddProject}
                   onEditProject={handleOpenEditProject}
                   onDeleteProject={handleDeleteProject}
                   onToggleStatus={handleToggleStatus}
-                  onViewAllExperience={() => setAdminTab('experience')}
+                  onSetPosition={handleSetProjectPosition}
                   statusFilter={statusFilter}
                   setStatusFilter={setStatusFilter}
                   searchQuery={searchQuery}
                   setSearchQuery={setSearchQuery}
+                  error={projectsError}
+                  loading={projectsLoading}
+                  reordering={projectsReordering}
+                  onRetry={loadProjects}
                 />
               )}
 
@@ -259,7 +257,6 @@ export default function App() {
         initialProject={editingProject}
         existingProjects={projects}
         categories={categories}
-        onAddCategory={handleAddCategory}
       />
       )}
 
@@ -285,14 +282,6 @@ export default function App() {
       />
       )}
 
-      {isPublishModalOpen && (
-      <PublishModal
-        isOpen={isPublishModalOpen}
-        onClose={() => setIsPublishModalOpen(false)}
-        onSwitchToPublic={handleSwitchToPublic}
-        projectsCount={totalProjectsCount}
-      />
-      )}
       </React.Suspense>
     </div>
   );

@@ -22,7 +22,7 @@ export class AdminController {
 
   async getStats(req: Request, res: Response) {
     try {
-      const stats = adminService.getDashboardStats();
+      const stats = await adminService.getDashboardStats();
       return sendSuccess(res, stats);
     } catch (err: any) {
       return sendError(res, err.message || 'Failed to fetch dashboard stats');

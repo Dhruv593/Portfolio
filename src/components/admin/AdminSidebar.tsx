@@ -6,7 +6,6 @@ export type AdminTab = 'overview' | 'projects' | 'blogs' | 'experience' | 'skill
 interface AdminSidebarProps {
   activeTab: AdminTab;
   setActiveTab: (tab: AdminTab) => void;
-  onPublishClick: () => void;
   onSwitchToPublic: () => void;
   isMobileOpen: boolean;
   setIsMobileOpen: (open: boolean) => void;
@@ -18,7 +17,7 @@ const groups = [
   { label: 'About you', items: [{ id: 'experience', label: 'Experience', icon: Briefcase }, { id: 'education', label: 'Education', icon: GraduationCap }, { id: 'skills', label: 'Skills', icon: Brain }, { id: 'profile', label: 'Profile', icon: User }] },
 ] as const;
 
-export const AdminSidebar: React.FC<AdminSidebarProps> = ({ activeTab, setActiveTab, onPublishClick, onSwitchToPublic, isMobileOpen, setIsMobileOpen }) => {
+export const AdminSidebar: React.FC<AdminSidebarProps> = ({ activeTab, setActiveTab, onSwitchToPublic, isMobileOpen, setIsMobileOpen }) => {
   const drawerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -72,8 +71,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ activeTab, setActive
         ))}
       </nav>
 
-      <div className="space-y-2 border-t border-slate-200 p-3">
-        <button type="button" onClick={() => { onPublishClick(); setIsMobileOpen(false); }} className="min-h-11 w-full rounded-lg bg-[#0058be] px-3 text-sm font-semibold text-white hover:bg-[#004a9f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0058be]">Publish live</button>
+      <div className="border-t border-slate-200 p-3">
         <button type="button" onClick={onSwitchToPublic} className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-[#0058be]"><ExternalLink className="h-4 w-4" /> View website</button>
       </div>
     </div>

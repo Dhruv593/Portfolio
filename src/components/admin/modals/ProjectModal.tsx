@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { X, Upload, Sparkles, Plus, Check } from 'lucide-react';
+import { X, Plus, Check } from 'lucide-react';
 import { Project, ProjectStatus } from '../../../types';
 import { normalizeImageUrl } from '../../../utils/imageUtils';
 import { ImageAdjuster } from '../ImageAdjuster';
-import { portfolioApi } from '../../../api/portfolioApi';
 
 interface ProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (projectData: Partial<Project>) => void;
+  onSave: (projectData: Partial<Project>) => Promise<void>;
   initialProject?: Project | null;
   existingProjects?: Project[];
   categories?: string[];
-  onAddCategory?: (category: string) => void;
 }
 
 export const ProjectModal: React.FC<ProjectModalProps> = ({
@@ -22,13 +20,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   initialProject,
   existingProjects = [],
   categories: propCategories = [],
-  onAddCategory,
 }) => {
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
   const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
   const [customCategory, setCustomCategory] = useState('');
-  const [dbCategories, setDbCategories] = useState<string[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const [status, setStatus] = useState<ProjectStatus>('Published');
   const [image, setImage] = useState('');
   const [imagePosition, setImagePosition] = useState('50% 50%');
@@ -39,35 +37,20 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const [githubUrl, setGithubUrl] = useState('');
   const [liveUrl, setLiveUrl] = useState('');
   const [tagsInput, setTagsInput] = useState('');
-  const [featured, setFeatured] = useState(false);
 
-  // Load categories directly from backend DB API when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      portfolioApi
-        .getCategories()
-        .then((res) => {
-          const list = res.categories || res.data?.categories || [];
-          if (list.length > 0) {
-            setDbCategories(list);
-          }
-        })
-        .catch(() => {});
-    }
-  }, [isOpen]);
-
-  // Derive unique combined categories list (from DB API, props, and existing projects)
+  // Existing categories plus categories already used by projects.
   const existingCategoriesFromProjects = existingProjects
     .map((p) => p.category)
     .filter((c): c is string => Boolean(c && c.trim()));
 
   const allCategories = Array.from(
-    new Set([...dbCategories, ...propCategories, ...existingCategoriesFromProjects])
+    new Set(['General', ...propCategories, ...existingCategoriesFromProjects, category].filter(Boolean))
   );
 
   useEffect(() => {
     setIsAddingNewCategory(false);
     setCustomCategory('');
+    setSaveError('');
 
     if (initialProject) {
       setName(initialProject.name || '');
@@ -83,12 +66,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setGithubUrl(initialProject.githubUrl || '');
       setLiveUrl(initialProject.liveUrl || '');
       setTagsInput(initialProject.tags ? initialProject.tags.join(', ') : '');
-      setFeatured(Boolean(initialProject.featured));
     } else {
       setName('');
       setCategory(allCategories[0] || 'General');
       setStatus('Published');
-      setImage('https://images.unsplash.com/photo-1523206489230-c012c64b2b48?auto=format&fit=crop&w=800&q=80');
+      setImage('');
       setImagePosition('50% 50%');
       setImageFit('cover');
       setImageScale(1);
@@ -96,39 +78,22 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setLongDescription('');
       setGithubUrl('');
       setLiveUrl('');
-      setTagsInput('REACT, TAILWIND, TYPESCRIPT');
-      setFeatured(false);
+      setTagsInput('');
     }
   }, [initialProject, isOpen]);
 
   if (!isOpen) return null;
 
-  const handleAddCustomCategory = async () => {
+  const handleAddCustomCategory = () => {
     const trimmed = customCategory.trim();
     if (trimmed) {
-      // Save directly to backend DB
-      try {
-        const res = await portfolioApi.createCategory(trimmed);
-        const updatedList = res.categories || res.data?.categories || [];
-        if (updatedList.length > 0) {
-          setDbCategories(updatedList);
-        } else {
-          setDbCategories((prev) => Array.from(new Set([...prev, trimmed])));
-        }
-      } catch {
-        setDbCategories((prev) => Array.from(new Set([...prev, trimmed])));
-      }
-
-      if (onAddCategory) {
-        onAddCategory(trimmed);
-      }
       setCategory(trimmed);
       setIsAddingNewCategory(false);
       setCustomCategory('');
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const finalCategory = isAddingNewCategory ? customCategory.trim() || 'General' : category || 'General';
 
@@ -137,7 +102,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       .map((t) => t.trim().toUpperCase())
       .filter(Boolean);
 
-    onSave({
+    setSaveError('');
+    setIsSaving(true);
+    try {
+      await onSave({
       id: initialProject?.id,
       name: name || 'Untitled Project',
       category: finalCategory,
@@ -151,34 +119,33 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       githubUrl,
       liveUrl,
       tags: tagsArr,
-      featured,
-    });
-    onClose();
+      });
+      onClose();
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Could not save the project. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const sampleImages = [
-    'https://images.unsplash.com/photo-1523206489230-c012c64b2b48?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&w=800&q=80',
-    'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80',
-  ];
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-fade-in">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-slate-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/50 sm:p-4">
+      <div role="dialog" aria-modal="true" aria-labelledby="project-editor-title" className="flex max-h-[95vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl sm:max-h-[90vh]">
         <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10">
-          <h3 className="text-xl font-bold text-[#151c27]">
+          <h3 id="project-editor-title" className="text-xl font-semibold text-[#151c27]">
             {initialProject ? 'Edit Project' : 'Add New Project'}
           </h3>
           <button
             onClick={onClose}
+            disabled={isSaving}
+            aria-label="Close project editor"
             className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="min-h-0 space-y-5 overflow-y-auto p-4 sm:p-6">
           {/* Title & Category */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -286,9 +253,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
             </div>
           </div>
 
-          {/* Status & Featured */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
+          <div>
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
                 Publication Status
               </label>
@@ -300,18 +265,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 <option value="Published">Published (Live on portfolio)</option>
                 <option value="Draft">Draft (Saved privately)</option>
               </select>
-            </div>
-            <div className="flex items-center pt-6">
-              <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-slate-700">
-                <input
-                  type="checkbox"
-                  checked={featured}
-                  onChange={(e) => setFeatured(e.target.checked)}
-                  className="w-4 h-4 text-[#2170e4] rounded-sm focus:ring-blue-500"
-                />
-                Feature this project on homepage
-              </label>
-            </div>
           </div>
 
           {/* Interactive Image Adjuster & Framing Control */}
@@ -329,20 +282,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
               sectionName="Project Card"
             />
 
-            {/* Preset Thumbnails */}
-            <div className="flex items-center gap-2 pt-1">
-              <span className="text-xs text-slate-400 font-semibold">Presets:</span>
-              {sampleImages.map((img, i) => (
-                <button
-                  type="button"
-                  key={i}
-                  onClick={() => setImage(img)}
-                  className="w-8 h-8 rounded-lg overflow-hidden border border-slate-300 hover:scale-110 transition-transform cursor-pointer"
-                >
-                  <img src={img} alt="Preset" className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
           </div>
 
           {/* Descriptions */}
@@ -360,6 +299,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
             />
           </div>
 
+          <details className="rounded-xl border border-slate-200 p-4">
+            <summary className="cursor-pointer text-sm font-semibold text-slate-800">More details and links</summary>
+            <div className="mt-4 space-y-4">
           <div>
             <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
               Detailed Architecture & Specs (For Detailed Project View)
@@ -414,21 +356,26 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
               />
             </div>
           </div>
+            </div>
+          </details>
 
           {/* Modal Actions */}
+          {saveError && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">Could not save project: {saveError}</p>}
           <div className="pt-4 border-t border-slate-200 flex justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
+              disabled={isSaving}
               className="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
+              disabled={isSaving}
               className="px-6 py-2.5 rounded-xl text-sm font-semibold bg-[#2170e4] text-white hover:bg-[#0058be] shadow-sm hover:shadow-md transition-all active:scale-95 cursor-pointer"
             >
-              Save Project
+              {isSaving ? 'Saving…' : 'Save project'}
             </button>
           </div>
         </form>

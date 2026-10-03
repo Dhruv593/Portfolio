@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Trash2, CheckCircle2, Clock, Search, RefreshCw, User, MessageSquare } from 'lucide-react';
 import { ContactMessage } from '../../types';
+import { apiClient } from '../../api/apiClient';
 
 interface AdminMessagesTableProps {
   onRefresh?: () => void;
@@ -15,11 +16,8 @@ export const AdminMessagesTable: React.FC<AdminMessagesTableProps> = () => {
   const fetchMessages = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/contact');
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setMessages(data.messages || []);
-      }
+      const data = await apiClient.get<{ messages: ContactMessage[] }>('/contact');
+      setMessages(data.messages || []);
     } catch (err) {
       console.error('Error fetching messages:', err);
     } finally {
@@ -34,11 +32,9 @@ export const AdminMessagesTable: React.FC<AdminMessagesTableProps> = () => {
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this contact message?')) return;
     try {
-      const res = await fetch(`/api/contact/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        setMessages((prev) => prev.filter((m) => m.id !== id));
-        if (selectedMsg?.id === id) setSelectedMsg(null);
-      }
+      await apiClient.delete(`/contact/${id}`);
+      setMessages((prev) => prev.filter((m) => m.id !== id));
+      if (selectedMsg?.id === id) setSelectedMsg(null);
     } catch (err) {
       console.error('Error deleting message:', err);
     }
@@ -46,9 +42,8 @@ export const AdminMessagesTable: React.FC<AdminMessagesTableProps> = () => {
 
   const handleToggleRead = async (id: string) => {
     try {
-      const res = await fetch(`/api/contact/${id}/read`, { method: 'PATCH' });
-      const data = await res.json();
-      if (res.ok && data.success) {
+      const data = await apiClient.patch<{ data: ContactMessage }>(`/contact/${id}/read`);
+      if (data.data) {
         setMessages((prev) =>
           prev.map((m) => (m.id === id ? { ...m, read: data.data.read } : m))
         );

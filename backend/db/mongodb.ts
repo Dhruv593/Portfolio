@@ -71,6 +71,9 @@ class DatabaseService {
         return true;
       } catch (err: any) {
         this.isConnected = false;
+        await this.client?.close().catch(() => {});
+        this.db = null;
+        this.client = null;
         this.connectionError = err.message || 'Failed to connect to MongoDB cluster';
         logger.mongoStatus('FAILED', targetUri, this.connectionError);
         return false;
@@ -132,9 +135,13 @@ class DatabaseService {
           logger.error('Error during MongoDB collection sync', result.reason);
         }
       });
+      if (syncResults[0].status === 'rejected') {
+        throw syncResults[0].reason;
+      }
       saveJsonStore();
     } catch (err) {
       logger.error('Error during MongoDB collection sync', err);
+      throw err;
     }
   }
 

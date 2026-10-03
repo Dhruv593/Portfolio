@@ -229,8 +229,9 @@ export const ImageAdjuster: React.FC<ImageAdjusterProps> = ({
             </div>
           </div>
 
-          {/* Sizing & Position Control Panel */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white p-3.5 rounded-xl border border-slate-200/90 text-xs">
+          <details className="rounded-xl border border-slate-200 bg-white p-3.5">
+            <summary className="cursor-pointer text-sm font-semibold text-slate-800">Adjust crop and fit</summary>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             {/* Left: Fit Mode & Scale */}
             <div className="space-y-3">
               <div>
@@ -331,6 +332,7 @@ export const ImageAdjuster: React.FC<ImageAdjusterProps> = ({
               </div>
             </div>
           </div>
+          </details>
         </div>
       ) : (
         <div className="p-4 bg-white rounded-xl border border-dashed border-slate-200 text-center text-xs text-slate-400 font-medium">

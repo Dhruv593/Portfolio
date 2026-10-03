@@ -70,6 +70,16 @@ export class ProjectController {
     }
   }
 
+  async setProjectPosition(req: Request, res: Response) {
+    try {
+      const updated = await projectService.setProjectPosition(req.params.id, req.body.position);
+      if (!updated) return sendError(res, 'Project not found', 404);
+      return sendSuccess(res, { message: 'Project order updated' });
+    } catch (err: any) {
+      return sendError(res, err.message || 'Failed to update project order');
+    }
+  }
+
   async deleteProject(req: Request, res: Response) {
     try {
       const success = await projectService.deleteProject(req.params.id);
