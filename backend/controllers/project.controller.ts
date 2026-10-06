@@ -25,10 +25,10 @@ export class ProjectController {
 
   async getProjects(req: Request, res: Response) {
     try {
-      const search = req.query.search as string;
-      const status = isAdminRequest(req) ? req.query.status as string : 'Published';
-      const page = parseInt(req.query.page as string || '1', 10);
-      const limit = parseInt(req.query.limit as string || '10', 10);
+      const search = typeof req.query.search === 'string' ? req.query.search.slice(0, 100) : '';
+      const status = isAdminRequest(req) ? (typeof req.query.status === 'string' ? req.query.status : 'All') : 'Published';
+      const page = Math.max(1, Math.min(1000, Number.parseInt(String(req.query.page || '1'), 10) || 1));
+      const limit = Math.max(1, Math.min(100, Number.parseInt(String(req.query.limit || '10'), 10) || 10));
 
       const result = await projectService.getAllProjects({ search, status, page, limit });
       return sendSuccess(res, result.projects, 200, undefined, {

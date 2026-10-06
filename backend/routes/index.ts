@@ -21,7 +21,6 @@ router.use('/education', educationRoutes);
 router.use('/skills', skillsRoutes);
 router.use('/profile', profileRoutes);
 router.use('/contact', contactRoutes);
-router.use('/messages', contactRoutes);
 router.use('/admin', adminRoutes);
 router.use('/health', healthRoutes);
 router.use('/media', mediaRoutes);

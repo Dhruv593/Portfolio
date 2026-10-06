@@ -9,11 +9,6 @@ export interface ContactMessagePayload {
 
 export const contactService = {
   sendMessage: async (payload: ContactMessagePayload) => {
-    try {
-      return await apiClient.post<{ success: boolean; message?: string }>('/contact', payload);
-    } catch {
-      // Return simulated success if contact endpoint is local fallback
-      return { success: true };
-    }
+    return apiClient.post<{ success: boolean; message?: string }>('/contact', payload);
   },
 };

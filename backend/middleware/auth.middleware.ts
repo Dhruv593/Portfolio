@@ -12,6 +12,7 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export const isAdminRequest = (req: Request): boolean => {
+  if (!env.ADMIN_AUTH_CONFIGURED) return false;
   const match = /^Bearer (\S+)$/i.exec(req.headers.authorization || '');
   if (!match) return false;
   try {
@@ -27,6 +28,9 @@ export const authenticateAdmin = (
   res: Response,
   next: NextFunction
 ) => {
+  if (!env.ADMIN_AUTH_CONFIGURED) {
+    return sendError(res, 'Admin access is unavailable until server credentials are configured.', 503);
+  }
   if (!req.headers.authorization) {
     return sendError(res, 'Unauthorized: Missing authentication token.', 401);
   }

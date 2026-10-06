@@ -14,7 +14,7 @@ export class AdminController {
         return sendSuccess(res, { token: result.token }, 200, 'Login successful');
       }
 
-      return sendError(res, result.error || 'Incorrect passcode', 401);
+      return sendError(res, result.error || 'Incorrect passcode', result.error?.startsWith('Admin access is unavailable') ? 503 : 401);
     } catch (err: any) {
       return sendError(res, err.message || 'Login attempt failed');
     }

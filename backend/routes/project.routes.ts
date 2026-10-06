@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { projectController } from '../controllers/project.controller.js';
 import { authenticateAdmin } from '../middleware/auth.middleware.js';
 import { validateRequest } from '../middleware/validate.middleware.js';
-import { createProjectSchema, updateProjectSchema, projectPositionSchema } from '../utils/validators.js';
+import { createProjectSchema, updateProjectSchema, projectPositionSchema, categorySchema } from '../utils/validators.js';
 import { dbService } from '../db/mongodb.js';
 import { env } from '../config/env.config.js';
 import { sendError } from '../utils/apiResponse.js';
@@ -19,7 +19,7 @@ const requireProjectStorage = (_req: Request, res: Response, next: NextFunction)
 router.use(requireProjectStorage);
 
 router.get('/categories', projectController.getCategories);
-router.post('/categories', authenticateAdmin, projectController.addCategory);
+router.post('/categories', authenticateAdmin, validateRequest(categorySchema), projectController.addCategory);
 router.get('/', projectController.getProjects);
 router.get('/:id', projectController.getProjectById);
 router.post('/', authenticateAdmin, validateRequest(createProjectSchema), projectController.createProject);

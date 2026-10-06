@@ -50,11 +50,18 @@ class ApiClient {
         return {} as T;
       }
 
-      const data = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      const data = contentType.includes('json')
+        ? await response.json()
+        : null;
 
       if (!response.ok) {
-        throw new Error(data.error || data.message || `Request failed with status ${response.status}`);
+        throw new Error(data?.error || data?.message || (response.status >= 500
+          ? 'The server is temporarily unavailable. Please try again shortly.'
+          : `Request failed with status ${response.status}`));
       }
+
+      if (!data) throw new Error('The server returned an unexpected response. Please try again.');
 
       return data as T;
     } catch (err: any) {

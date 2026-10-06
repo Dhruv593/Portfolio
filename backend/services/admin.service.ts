@@ -5,6 +5,9 @@ import { dbService } from '../db/mongodb.js';
 
 export class AdminService {
   authenticate(password: string): { success: boolean; token?: string; error?: string } {
+    if (!env.ADMIN_AUTH_CONFIGURED) {
+      return { success: false, error: 'Admin access is unavailable until server credentials are configured.' };
+    }
     const adminPasscode = env.ADMIN_PASSWORD;
 
     if (password === adminPasscode) {

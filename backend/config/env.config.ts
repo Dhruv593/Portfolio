@@ -36,19 +36,14 @@ if (!_env.success) {
 const isProduction = _env.data.NODE_ENV === 'production';
 const insecureDevelopmentDefaults = new Set(['dev-admin-password', 'dev-super-secret-jwt-key-2026']);
 
-// Critical Security Assertions for Production Deployments
-if (isProduction) {
-  if (!_env.data.ADMIN_PASSWORD || _env.data.ADMIN_PASSWORD.length < 12 || insecureDevelopmentDefaults.has(_env.data.ADMIN_PASSWORD)) {
-    throw new Error(
-      'SECURITY ERROR: Set a unique ADMIN_PASSWORD of at least 12 characters for production.'
-    );
-  }
-  if (!_env.data.JWT_SECRET || _env.data.JWT_SECRET.length < 32 || insecureDevelopmentDefaults.has(_env.data.JWT_SECRET)) {
-    throw new Error(
-      'SECURITY ERROR: Set a unique random JWT_SECRET of at least 32 characters for production.'
-    );
-  }
-}
+// Keep public routes available when admin credentials are misconfigured.
+// Admin authentication itself fails closed until both production secrets are valid.
+const adminAuthConfigured = !isProduction || (
+  _env.data.ADMIN_PASSWORD.length >= 12 &&
+  _env.data.JWT_SECRET.length >= 32 &&
+  !insecureDevelopmentDefaults.has(_env.data.ADMIN_PASSWORD) &&
+  !insecureDevelopmentDefaults.has(_env.data.JWT_SECRET)
+);
 
 export const env = {
   NODE_ENV: _env.data.NODE_ENV,
@@ -66,4 +61,5 @@ export const env = {
   SMTP_PASS: _env.data.SMTP_PASS,
   ALLOWED_ORIGINS: _env.data.ALLOWED_ORIGINS,
   IS_PROD: isProduction,
+  ADMIN_AUTH_CONFIGURED: adminAuthConfigured,
 };

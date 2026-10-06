@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { env } from '../config/env.config.js';
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -31,7 +32,7 @@ export const sendError = (
 ) => {
   return res.status(statusCode).json({
     success: false,
-    error,
-    ...(details && { details }),
+    error: env.IS_PROD && statusCode === 500 ? 'Internal server error' : error,
+    ...(details && !(env.IS_PROD && statusCode === 500) && { details }),
   });
 };

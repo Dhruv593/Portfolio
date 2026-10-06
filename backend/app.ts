@@ -35,14 +35,19 @@ const allowedOrigins = env.ALLOWED_ORIGINS
   : [];
 
 app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (!env.IS_PROD) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      return callback(new Error(`CORS policy: Origin ${origin} is not allowed.`), false);
-    },
-    credentials: true,
+  cors((req, callback) => {
+    const origin = req.headers.origin;
+    let sameOrigin = false;
+    if (origin) {
+      try {
+        const parsed = new URL(origin);
+        sameOrigin = parsed.protocol === 'https:' && parsed.host === req.get('host');
+      } catch {
+        sameOrigin = false;
+      }
+    }
+    const allowed = !origin || !env.IS_PROD || sameOrigin || allowedOrigins.includes(origin);
+    callback(null, { origin: allowed, credentials: true });
   })
 );
 
@@ -63,6 +68,14 @@ app.use('/api', async (_req, res, next) => {
     logger.error('Database connection error in request handler', err);
   }
   res.setHeader('Server-Timing', `mongo-connect;dur=${(performance.now() - started).toFixed(1)}`);
+  next();
+});
+
+// Never serve bundled sample data or accept non-persistent writes in production.
+app.use('/api', (req, res, next) => {
+  if (env.IS_PROD && !dbService.getDb() && req.path !== '/health') {
+    return res.status(503).json({ success: false, error: 'Portfolio database is temporarily unavailable.' });
+  }
   next();
 });
 

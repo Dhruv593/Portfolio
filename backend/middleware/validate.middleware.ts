@@ -5,11 +5,14 @@ import { sendError } from '../utils/apiResponse.js';
 export const validateRequest = (schema: ZodSchema<any>) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await schema.parseAsync({
+      const parsed = await schema.parseAsync({
         body: req.body,
         query: req.query,
         params: req.params,
       });
+      // Pass only validated fields to controllers. Parsing alone leaves unknown
+      // client fields in req.body, where update services could persist them.
+      if (parsed.body !== undefined) req.body = parsed.body;
       return next();
     } catch (error) {
       if (error instanceof ZodError) {
