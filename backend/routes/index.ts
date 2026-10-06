@@ -9,9 +9,11 @@ import contactRoutes from './contact.routes.js';
 import adminRoutes from './admin.routes.js';
 import healthRoutes from './health.routes.js';
 import mediaRoutes from './media.routes.js';
+import publicRoutes from './public.routes.js';
 
 const router = Router();
 
+router.use('/public', publicRoutes);
 router.use('/projects', projectRoutes);
 router.use('/blogs', blogRoutes);
 router.use('/experience', experienceRoutes);

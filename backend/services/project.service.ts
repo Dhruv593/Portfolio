@@ -60,6 +60,14 @@ export class ProjectService {
 
   async getCategories(): Promise<string[]> {
     await this.refreshProjects();
+    const mongoDb = dbService.getDb();
+    if (mongoDb) {
+      const categories = await mongoDb.collection('categories').find({}, { projection: { name: 1 } }).toArray();
+      dbStore.categories = Array.from(new Set([
+        ...(dbStore.categories || []),
+        ...categories.map((category) => String(category.name)),
+      ]));
+    }
     if (!dbStore.categories) {
       dbStore.categories = [];
     }

@@ -44,6 +44,7 @@ export class AdminController {
       const connected = await dbService.connect(uri);
 
       if (connected) {
+        await dbService.syncCollections();
         return sendSuccess(res, { message: 'MongoDB connected and synced successfully!' });
       }
 

@@ -5,11 +5,20 @@ import { initialProfile } from '../../src/data/initialData.js';
 
 export class ProfileService {
   async getProfile(): Promise<ProfileDataDoc> {
+    const mongoDb = dbService.getDb();
+    if (mongoDb) {
+      const collection = mongoDb.collection('profile');
+      const doc = await collection.findOne({ _id: 'main-profile' } as any) || await collection.findOne({});
+      if (doc) {
+        const { _id, ...profile } = doc;
+        dbStore.profile = [profile as ProfileDataDoc];
+      }
+    }
     return dbStore.profile[0] || initialProfile;
   }
 
   async updateProfile(data: Partial<ProfileDataDoc>): Promise<ProfileDataDoc> {
-    const current = dbStore.profile[0] || initialProfile;
+    const current = await this.getProfile();
     const updated = { ...current, ...data };
     dbStore.profile[0] = updated;
     saveJsonStore();

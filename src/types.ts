@@ -86,6 +86,15 @@ export interface ProfileData {
   sectionVisibility?: Partial<Record<PortfolioSectionId, boolean>>;
 }
 
+export interface PublicPortfolioData {
+  projects: Project[];
+  blogs: BlogPost[];
+  experience: ExperienceItem[];
+  education: EducationItem[];
+  skills: SkillCategory[];
+  profile: ProfileData;
+}
+
 export type PortfolioSectionId = 'hero' | 'about' | 'experience' | 'projects' | 'skills' | 'education' | 'blog' | 'contact';
 
 export interface DashboardStats {

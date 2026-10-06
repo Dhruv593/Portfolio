@@ -1,9 +1,16 @@
 import { dbStore, saveJsonStore } from '../db/jsonStore.js';
 import { dbService } from '../db/mongodb.js';
+import { readCollection } from '../db/readCollection.js';
 import { BlogDoc } from '../models/types.js';
 
 export class BlogService {
+  private async refreshBlogs() {
+    const items = await readCollection<BlogDoc>('blogs');
+    if (items) dbStore.blogs = items;
+  }
+
   async getAllBlogs(query: { search?: string; status?: string; page?: number; limit?: number }) {
+    await this.refreshBlogs();
     const search = (query.search || '').toLowerCase();
     const status = query.status || 'All';
     const page = query.page || 1;
@@ -40,11 +47,21 @@ export class BlogService {
   }
 
   async getBlogByIdOrSlug(idOrSlug: string): Promise<BlogDoc | null> {
+    await this.refreshBlogs();
     const blog = (dbStore.blogs || []).find((b) => b.id === idOrSlug || b.slug === idOrSlug);
     return blog || null;
   }
 
   async getCategories(): Promise<string[]> {
+    await this.refreshBlogs();
+    const mongoDb = dbService.getDb();
+    if (mongoDb) {
+      const categories = await mongoDb.collection('blog_categories').find({}, { projection: { name: 1 } }).toArray();
+      dbStore.blogCategories = Array.from(new Set([
+        ...(dbStore.blogCategories || []),
+        ...categories.map((category) => String(category.name)),
+      ]));
+    }
     if (!dbStore.blogCategories) {
       dbStore.blogCategories = [];
     }
@@ -80,6 +97,7 @@ export class BlogService {
   }
 
   async createBlog(data: any): Promise<BlogDoc> {
+    await this.refreshBlogs();
     let tagsArray: string[] = [];
     if (Array.isArray(data.tags)) {
       tagsArray = data.tags;
@@ -134,6 +152,7 @@ export class BlogService {
   }
 
   async updateBlog(id: string, data: any): Promise<BlogDoc | null> {
+    await this.refreshBlogs();
     if (!dbStore.blogs) dbStore.blogs = [];
     const index = dbStore.blogs.findIndex((b) => b.id === id);
     if (index === -1) return null;
@@ -178,6 +197,7 @@ export class BlogService {
   }
 
   async deleteBlog(id: string): Promise<boolean> {
+    await this.refreshBlogs();
     if (!dbStore.blogs) return false;
     const index = dbStore.blogs.findIndex((b) => b.id === id);
     if (index === -1) return false;

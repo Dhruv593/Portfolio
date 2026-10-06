@@ -8,9 +8,14 @@ import {
   ProfileData,
   DashboardStats,
   MongoConfig,
+  PublicPortfolioData,
 } from '../types';
 
 export const portfolioApi = {
+  getPublicPortfolio: async () => {
+    return apiClient.get<PublicPortfolioData>('/public');
+  },
+
   // Projects API
   getCategories: async () => {
     return apiClient.get<{ categories?: string[]; data?: { categories: string[] } }>('/projects/categories');

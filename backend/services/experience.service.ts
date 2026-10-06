@@ -1,13 +1,21 @@
 import { dbStore, saveJsonStore } from '../db/jsonStore.js';
 import { dbService } from '../db/mongodb.js';
+import { readCollection } from '../db/readCollection.js';
 import { ExperienceItemDoc } from '../models/types.js';
 
 export class ExperienceService {
+  private async refreshExperience() {
+    const items = await readCollection<ExperienceItemDoc>('experience');
+    if (items) dbStore.experience = items;
+  }
+
   async getExperience(): Promise<ExperienceItemDoc[]> {
+    await this.refreshExperience();
     return dbStore.experience;
   }
 
   async createExperience(data: Partial<ExperienceItemDoc>): Promise<ExperienceItemDoc> {
+    await this.refreshExperience();
     const item: ExperienceItemDoc = {
       id: `exp-${Date.now()}`,
       role: data.role || 'New Role',
@@ -30,6 +38,7 @@ export class ExperienceService {
   }
 
   async updateExperience(id: string, data: Partial<ExperienceItemDoc>): Promise<ExperienceItemDoc | null> {
+    await this.refreshExperience();
     const index = dbStore.experience.findIndex((e) => e.id === id);
     if (index === -1) return null;
 
@@ -45,6 +54,7 @@ export class ExperienceService {
   }
 
   async deleteExperience(id: string): Promise<boolean> {
+    await this.refreshExperience();
     const len = dbStore.experience.length;
     dbStore.experience = dbStore.experience.filter((e) => e.id !== id);
     if (dbStore.experience.length === len) return false;

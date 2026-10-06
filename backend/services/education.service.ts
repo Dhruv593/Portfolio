@@ -1,13 +1,21 @@
 import { dbStore, saveJsonStore } from '../db/jsonStore.js';
 import { dbService } from '../db/mongodb.js';
+import { readCollection } from '../db/readCollection.js';
 import { EducationItemDoc } from '../models/types.js';
 
 export class EducationService {
+  private async refreshEducation() {
+    const items = await readCollection<EducationItemDoc>('education');
+    if (items) dbStore.education = items;
+  }
+
   async getEducation(): Promise<EducationItemDoc[]> {
+    await this.refreshEducation();
     return dbStore.education;
   }
 
   async createEducation(data: Partial<EducationItemDoc>): Promise<EducationItemDoc> {
+    await this.refreshEducation();
     const item: EducationItemDoc = {
       id: `edu-${Date.now()}`,
       degree: data.degree || 'Degree',
@@ -30,6 +38,7 @@ export class EducationService {
   }
 
   async updateEducation(id: string, data: Partial<EducationItemDoc>): Promise<EducationItemDoc | null> {
+    await this.refreshEducation();
     const index = dbStore.education.findIndex((e) => e.id === id);
     if (index === -1) return null;
 
@@ -45,6 +54,7 @@ export class EducationService {
   }
 
   async deleteEducation(id: string): Promise<boolean> {
+    await this.refreshEducation();
     const len = dbStore.education.length;
     dbStore.education = dbStore.education.filter((e) => e.id !== id);
     if (dbStore.education.length === len) return false;

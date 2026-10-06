@@ -1,13 +1,21 @@
 import { dbStore, saveJsonStore } from '../db/jsonStore.js';
 import { dbService } from '../db/mongodb.js';
+import { readCollection } from '../db/readCollection.js';
 import { SkillCategoryDoc } from '../models/types.js';
 
 export class SkillsService {
+  private async refreshSkills() {
+    const items = await readCollection<SkillCategoryDoc>('skills');
+    if (items) dbStore.skills = items;
+  }
+
   async getSkills(): Promise<SkillCategoryDoc[]> {
+    await this.refreshSkills();
     return dbStore.skills;
   }
 
   async createSkillCategory(data: Partial<SkillCategoryDoc>): Promise<SkillCategoryDoc> {
+    await this.refreshSkills();
     const item: SkillCategoryDoc = {
       id: `skill-${Date.now()}`,
       category: data.category || 'Category',
@@ -27,6 +35,7 @@ export class SkillsService {
   }
 
   async updateSkillCategory(id: string, data: Partial<SkillCategoryDoc>): Promise<SkillCategoryDoc | null> {
+    await this.refreshSkills();
     const index = dbStore.skills.findIndex((s) => s.id === id);
     if (index === -1) return null;
 
@@ -42,6 +51,7 @@ export class SkillsService {
   }
 
   async deleteSkillCategory(id: string): Promise<boolean> {
+    await this.refreshSkills();
     const len = dbStore.skills.length;
     dbStore.skills = dbStore.skills.filter((s) => s.id !== id);
     if (dbStore.skills.length === len) return false;

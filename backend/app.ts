@@ -49,12 +49,14 @@ app.use('/api', (_req, res, next) => {
 });
 
 // 4. Serverless & Runtime MongoDB lazy connection middleware
-app.use('/api', async (_req, _res, next) => {
+app.use('/api', async (_req, res, next) => {
+  const started = performance.now();
   try {
     await dbService.connect();
   } catch (err) {
     logger.error('Database connection error in request handler', err);
   }
+  res.setHeader('Server-Timing', `mongo-connect;dur=${(performance.now() - started).toFixed(1)}`);
   next();
 });
 

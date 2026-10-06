@@ -1,6 +1,7 @@
 import React from 'react';
 import { PublicPortfolioNav } from './components/PublicPortfolioNav';
 import { PublicPortfolioView } from './components/PublicPortfolioView';
+import { PublicPortfolioLoading } from './components/public/PublicPortfolioLoading';
 import { Toast } from './components/Toast';
 import { useToast } from './hooks/useToast';
 import { useAuth } from './hooks/useAuth';
@@ -37,6 +38,9 @@ export default function App() {
 
   const {
     adminTab,
+    publicStatus,
+    publicError,
+    loadPublicPortfolio,
     setAdminTab,
     searchQuery,
     setSearchQuery,
@@ -104,7 +108,16 @@ export default function App() {
       {/* Toast Notification Banner */}
       <Toast toast={toast} onClose={hideToast} />
 
-      {viewMode === 'public' ? (
+      {viewMode === 'public' && publicStatus === 'loading' ? (
+        <PublicPortfolioLoading />
+      ) : viewMode === 'public' && publicStatus === 'error' ? (
+        <div role="alert" className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
+          <h1 className="text-2xl font-semibold">Portfolio unavailable</h1>
+          <p className="max-w-md text-sm text-slate-600">{publicError}</p>
+          <button type="button" onClick={loadPublicPortfolio} className="min-h-11 rounded-lg bg-[#0058be] px-5 font-semibold text-white hover:bg-[#004a9f]">Try again</button>
+          <button type="button" onClick={handleSwitchToAdmin} className="min-h-11 rounded-lg px-5 text-sm font-medium text-slate-600 hover:text-slate-900">Admin dashboard</button>
+        </div>
+      ) : viewMode === 'public' ? (
         // --- PUBLIC PORTFOLIO VIEW ---
         <div className="min-h-screen flex flex-col">
           <PublicPortfolioNav profile={profile} />

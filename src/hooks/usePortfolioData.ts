@@ -12,13 +12,6 @@ import {
   PortfolioSectionId,
 } from '../types';
 import { isSectionVisible } from '../utils/sectionVisibility';
-import {
-  initialBlogs,
-  initialExperience,
-  initialEducation,
-  initialSkills,
-  initialProfile,
-} from '../data/initialData';
 import { AdminTab } from '../components/admin/AdminSidebar';
 
 export function usePortfolioData(
@@ -61,12 +54,17 @@ export function usePortfolioData(
   const [projectsReordering, setProjectsReordering] = useState(false);
   const projectsRequestId = useRef(0);
   const [categories, setCategories] = useState<string[]>([]);
-  const [blogs, setBlogs] = useState<BlogPost[]>(initialBlogs);
+  const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [blogCategories, setBlogCategories] = useState<string[]>([]);
-  const [experience, setExperience] = useState<ExperienceItem[]>(initialExperience);
-  const [education, setEducation] = useState<EducationItem[]>(initialEducation);
-  const [skills, setSkills] = useState<SkillCategory[]>(initialSkills);
-  const [profile, setProfile] = useState<ProfileData>(initialProfile);
+  const [experience, setExperience] = useState<ExperienceItem[]>([]);
+  const [education, setEducation] = useState<EducationItem[]>([]);
+  const [skills, setSkills] = useState<SkillCategory[]>([]);
+  const [profile, setProfile] = useState<ProfileData>({
+    name: '', title: '', subtitle: '', avatarUrl: '', bioParagraph1: '', bioParagraph2: '',
+    email: '', location: '', github: '', linkedin: '', yearsExperience: 0,
+  });
+  const [publicStatus, setPublicStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [publicError, setPublicError] = useState('');
   const [visibilitySaving, setVisibilitySaving] = useState(false);
   const [stats, setStats] = useState<DashboardStats>({
     totalProjects: 0,
@@ -90,6 +88,28 @@ export function usePortfolioData(
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // Loaders
+  const loadPublicPortfolio = useCallback(async () => {
+    setPublicStatus('loading');
+    setPublicError('');
+    try {
+      const data = await portfolioApi.getPublicPortfolio();
+      if (!data?.profile || !Array.isArray(data.projects) || !Array.isArray(data.blogs)
+        || !Array.isArray(data.experience) || !Array.isArray(data.education) || !Array.isArray(data.skills)) {
+        throw new Error('The portfolio response was incomplete. Please try again.');
+      }
+      setProjects(data.projects);
+      setBlogs(data.blogs);
+      setExperience(data.experience);
+      setEducation(data.education);
+      setSkills(data.skills);
+      setProfile(data.profile);
+      setPublicStatus('ready');
+    } catch (error) {
+      setPublicError(error instanceof Error ? error.message : 'Could not load the portfolio.');
+      setPublicStatus('error');
+    }
+  }, []);
+
   const loadProjects = useCallback(async () => {
     const requestId = ++projectsRequestId.current;
     setProjectsLoading(true);
@@ -249,17 +269,8 @@ export function usePortfolioData(
   }, [viewMode, isAdminAuthenticated, loadProjects]);
 
   useEffect(() => {
-    loadPublicProjects();
-  }, [loadPublicProjects]);
-
-  // Content displayed on the public portfolio.
-  useEffect(() => {
-    loadBlogs();
-    loadExperience();
-    loadEducation();
-    loadSkills();
-    loadProfile();
-  }, [loadBlogs, loadExperience, loadEducation, loadSkills, loadProfile]);
+    loadPublicPortfolio();
+  }, [loadPublicPortfolio]);
 
   // Admin-only data is not needed for the public page.
   useEffect(() => {
@@ -562,6 +573,9 @@ export function usePortfolioData(
   };
 
   return {
+    publicStatus,
+    publicError,
+    loadPublicPortfolio,
     adminTab,
     setAdminTab,
     searchQuery,

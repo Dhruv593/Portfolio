@@ -10,6 +10,7 @@ class DatabaseService {
   private isConnected = false;
   private connectionError = '';
   private currentUri = '';
+  private lastSyncedAt = '';
   private connectingPromise: Promise<boolean> | null = null;
 
   private constructor() {}
@@ -35,7 +36,7 @@ class DatabaseService {
       return this.connectingPromise;
     }
 
-    // Reuse an active connection once its initial collection sync has finished.
+    // Reuse the connection within a warm function instance.
     if (this.isConnected && this.client && this.db && this.currentUri === targetUri && !customUri) {
       return true;
     }
@@ -60,13 +61,11 @@ class DatabaseService {
         this.db = this.client.db('portfolio_admin');
         this.isConnected = true;
         this.connectionError = '';
-        dbStore.mongoUri = targetUri;
-        saveJsonStore();
-
         logger.mongoStatus('CONNECTED', targetUri);
-
-        // Perform auto-sync between memory/JSON and MongoDB Atlas
-        await this.syncCollections();
+        if (customUri) {
+          dbStore.mongoUri = targetUri;
+          saveJsonStore();
+        }
 
         return true;
       } catch (err: any) {
@@ -85,7 +84,8 @@ class DatabaseService {
     return this.connectingPromise;
   }
 
-  private async syncCollections() {
+  // Run only when an administrator explicitly configures or migrates storage.
+  public async syncCollections() {
     const db = this.db;
     if (!db) return;
 
@@ -139,6 +139,7 @@ class DatabaseService {
         throw syncResults[0].reason;
       }
       saveJsonStore();
+      this.lastSyncedAt = new Date().toISOString();
     } catch (err) {
       logger.error('Error during MongoDB collection sync', err);
       throw err;
@@ -155,7 +156,7 @@ class DatabaseService {
       error: this.connectionError,
       uri: this.currentUri ? this.currentUri.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@') : '',
       dbName: 'portfolio_admin',
-      lastSynced: new Date().toLocaleTimeString(),
+      lastSynced: this.lastSyncedAt || undefined,
     };
   }
 
