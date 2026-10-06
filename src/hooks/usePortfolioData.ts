@@ -98,7 +98,7 @@ export function usePortfolioData(
         throw new Error('The portfolio response was incomplete. Please try again.');
       }
       setProjects(data.projects);
-      setBlogs(data.blogs);
+      if (viewMode === 'public') setBlogs(data.blogs);
       setExperience(data.experience);
       setEducation(data.education);
       setSkills(data.skills);
@@ -108,7 +108,7 @@ export function usePortfolioData(
       setPublicError(error instanceof Error ? error.message : 'Could not load the portfolio.');
       setPublicStatus('error');
     }
-  }, []);
+  }, [viewMode]);
 
   const loadProjects = useCallback(async () => {
     const requestId = ++projectsRequestId.current;
@@ -277,9 +277,10 @@ export function usePortfolioData(
     if (viewMode !== 'admin' || !isAdminAuthenticated) return;
     loadCategories();
     loadBlogCategories();
+    loadBlogs();
     loadStats();
     loadMongoStatus();
-  }, [viewMode, isAdminAuthenticated, loadCategories, loadBlogCategories, loadStats, loadMongoStatus]);
+  }, [viewMode, isAdminAuthenticated, loadCategories, loadBlogCategories, loadBlogs, loadStats, loadMongoStatus]);
 
   // Blog Handlers
   const handleOpenAddBlog = () => {

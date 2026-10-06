@@ -14,11 +14,18 @@ loadJsonStore();
 
 // 2. Instantiate Express App
 const app = express();
+// Vercel forwards the client address through one trusted proxy hop.
+if (env.IS_PROD) app.set('trust proxy', 1);
 
 // 3. Core Security & Parsing Middleware
 app.use(
   helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'none'"],
+        frameAncestors: ["'none'"],
+      },
+    },
     crossOriginEmbedderPolicy: false,
   })
 );
@@ -31,8 +38,7 @@ app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
-      const isLocalhost = /^(https?:\/\/)?(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
-      if (!env.IS_PROD || isLocalhost) return callback(null, true);
+      if (!env.IS_PROD) return callback(null, true);
       if (allowedOrigins.includes(origin)) return callback(null, true);
       return callback(new Error(`CORS policy: Origin ${origin} is not allowed.`), false);
     },
@@ -40,8 +46,8 @@ app.use(
   })
 );
 
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 app.use('/api', (_req, res, next) => {
   res.setHeader('Cache-Control', 'no-store');

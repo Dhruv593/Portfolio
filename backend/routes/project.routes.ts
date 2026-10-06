@@ -4,14 +4,13 @@ import { authenticateAdmin } from '../middleware/auth.middleware.js';
 import { validateRequest } from '../middleware/validate.middleware.js';
 import { createProjectSchema, updateProjectSchema, projectPositionSchema } from '../utils/validators.js';
 import { dbService } from '../db/mongodb.js';
-import { dbStore } from '../db/jsonStore.js';
 import { env } from '../config/env.config.js';
 import { sendError } from '../utils/apiResponse.js';
 
 const router = Router();
 
 const requireProjectStorage = (_req: Request, res: Response, next: NextFunction) => {
-  if ((env.IS_PROD || env.MONGODB_URI || dbStore.mongoUri) && !dbService.getStatus().connected) {
+  if ((env.IS_PROD || env.MONGODB_URI) && !dbService.getStatus().connected) {
     return sendError(res, 'MongoDB is unavailable. The project was not saved. Check the database connection and try again.', 503);
   }
   return next();

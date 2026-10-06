@@ -43,7 +43,6 @@ export let dbStore: DBStore = {
   messages: [],
   categories: [...defaultCategories],
   blogCategories: [...defaultBlogCategories],
-  mongoUri: process.env.MONGODB_URI || '',
 };
 
 export function loadJsonStore(): void {
@@ -68,7 +67,6 @@ export function loadJsonStore(): void {
       } else {
         dbStore.blogCategories = [...defaultBlogCategories];
       }
-      if (parsed.mongoUri) dbStore.mongoUri = parsed.mongoUri;
       logger.info('Loaded local portfolio database successfully.');
     } else {
       saveJsonStore();

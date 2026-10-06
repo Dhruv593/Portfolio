@@ -14,10 +14,10 @@ export function useAuth(showToast?: (text: string, type?: 'success' | 'error' | 
   const [viewMode, setViewMode] = useState<'admin' | 'public'>(isInitialAdminPath ? 'admin' : 'public');
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
     if (!isInitialAdminPath) return false;
-    return Boolean(localStorage.getItem('admin_auth_token') || sessionStorage.getItem('admin_auth_token'));
+    return Boolean(sessionStorage.getItem('admin_auth_token'));
   });
   const [isAdminAuthModalOpen, setIsAdminAuthModalOpen] = useState<boolean>(() => {
-    return isInitialAdminPath && !Boolean(localStorage.getItem('admin_auth_token') || sessionStorage.getItem('admin_auth_token'));
+    return isInitialAdminPath && !Boolean(sessionStorage.getItem('admin_auth_token'));
   });
 
   // Synchronize URL location with viewMode & handle token lifetime
@@ -26,7 +26,7 @@ export function useAuth(showToast?: (text: string, type?: 'success' | 'error' | 
       const isAdminRoute = window.location.pathname === '/admin' || window.location.hash === '#admin';
       if (isAdminRoute) {
         setViewMode('admin');
-        const token = localStorage.getItem('admin_auth_token') || sessionStorage.getItem('admin_auth_token');
+        const token = sessionStorage.getItem('admin_auth_token');
         if (!token) {
           setIsAdminAuthenticated(false);
           setIsAdminAuthModalOpen(true);
@@ -59,7 +59,7 @@ export function useAuth(showToast?: (text: string, type?: 'success' | 'error' | 
       window.history.pushState({}, '', '/admin');
     }
     setViewMode('admin');
-    const token = localStorage.getItem('admin_auth_token') || sessionStorage.getItem('admin_auth_token');
+    const token = sessionStorage.getItem('admin_auth_token');
     if (!token) {
       setIsAdminAuthenticated(false);
       setIsAdminAuthModalOpen(true);

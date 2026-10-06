@@ -8,8 +8,11 @@ import { env } from '../backend/config/env.config.js';
 
 test('public portfolio returns one MongoDB snapshot rather than bundled sample content', async () => {
   const documents: Record<string, object[]> = {
-    projects: [{ _id: 'project-1', name: 'Live project', displayOrder: 1 }],
-    blogs: [],
+    projects: [
+      { _id: 'project-1', name: 'Live project', displayOrder: 1, status: 'Published' },
+      { _id: 'project-draft', name: 'Draft project', displayOrder: 2, status: 'Draft' },
+    ],
+    blogs: [{ _id: 'blog-draft', title: 'Draft blog', status: 'Draft' }],
     experience: [{ _id: 'experience-1', role: 'AI Engineer' }],
     education: [],
     skills: [],
@@ -39,6 +42,8 @@ test('public portfolio returns one MongoDB snapshot rather than bundled sample c
     assert.equal(status, 200);
     assert.equal(data.profile.name, 'Live profile');
     assert.equal(data.projects[0].id, 'project-1');
+    assert.equal(data.projects.length, 1);
+    assert.equal(data.blogs.length, 0);
     assert.equal(data.experience[0].role, 'AI Engineer');
     assert.ok(headers['server-timing']?.includes('portfolio-read'));
     assert.equal((await experienceService.getExperience())[0].role, 'AI Engineer');

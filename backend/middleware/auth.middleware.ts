@@ -11,24 +11,28 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
+export const isAdminRequest = (req: Request): boolean => {
+  const match = /^Bearer (\S+)$/i.exec(req.headers.authorization || '');
+  if (!match) return false;
+  try {
+    const decoded = jwt.verify(match[1], env.JWT_SECRET, { algorithms: ['HS256'] });
+    return typeof decoded !== 'string' && decoded.role === 'admin';
+  } catch {
+    return false;
+  }
+};
+
 export const authenticateAdmin = (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader) {
+  if (!req.headers.authorization) {
     return sendError(res, 'Unauthorized: Missing authentication token.', 401);
   }
 
-  const token = authHeader.split(' ')[1] || authHeader;
-
-  try {
-    const decoded = jwt.verify(token, env.JWT_SECRET) as any;
-    req.user = decoded;
-    next();
-  } catch (err) {
+  if (!isAdminRequest(req)) {
     return sendError(res, 'Unauthorized: Invalid or expired token.', 401);
   }
+  next();
 };

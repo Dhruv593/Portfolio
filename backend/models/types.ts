@@ -28,7 +28,6 @@ export interface DBStore {
   messages: ContactMessage[];
   categories?: string[];
   blogCategories?: string[];
-  mongoUri?: string;
 }
 
 export type { MongoConfig, DashboardStats };

@@ -10,8 +10,18 @@ export interface EmailPayload {
   createdAt: string;
 }
 
+const escapeHtml = (value: string): string => value.replace(/[&<>"']/g, (character) => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+})[character] || character);
+
 export async function sendContactNotificationEmail(payload: EmailPayload): Promise<{ success: boolean; simulated?: boolean; error?: string }> {
   const recipientEmail = env.CONTACT_RECEIVER_EMAIL || 'cocdhruv4444@gmail.com';
+  const name = escapeHtml(payload.name);
+  const email = escapeHtml(payload.email);
+  const subject = escapeHtml(payload.subject);
+  const message = escapeHtml(payload.message);
+  const createdAt = escapeHtml(payload.createdAt);
+  const replyUrl = `mailto:${encodeURIComponent(payload.email)}?subject=${encodeURIComponent(`Re: ${payload.subject}`)}`;
 
   const htmlContent = `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
@@ -24,33 +34,33 @@ export async function sendContactNotificationEmail(payload: EmailPayload): Promi
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
           <tr>
             <td style="padding: 8px 0; color: #64748b; font-size: 13px; font-weight: 600; width: 100px;">Sender Name:</td>
-            <td style="padding: 8px 0; color: #0f172a; font-size: 14px; font-weight: 500;">${payload.name}</td>
+            <td style="padding: 8px 0; color: #0f172a; font-size: 14px; font-weight: 500;">${name}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #64748b; font-size: 13px; font-weight: 600;">Sender Email:</td>
             <td style="padding: 8px 0; color: #0058be; font-size: 14px; font-weight: 500;">
-              <a href="mailto:${payload.email}" style="color: #0058be; text-decoration: none;">${payload.email}</a>
+              <a href="mailto:${encodeURIComponent(payload.email)}" style="color: #0058be; text-decoration: none;">${email}</a>
             </td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #64748b; font-size: 13px; font-weight: 600;">Subject:</td>
-            <td style="padding: 8px 0; color: #0f172a; font-size: 14px; font-weight: 600;">${payload.subject}</td>
+            <td style="padding: 8px 0; color: #0f172a; font-size: 14px; font-weight: 600;">${subject}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: #64748b; font-size: 13px; font-weight: 600;">Date & Time:</td>
-            <td style="padding: 8px 0; color: #64748b; font-size: 13px;">${payload.createdAt}</td>
+            <td style="padding: 8px 0; color: #64748b; font-size: 13px;">${createdAt}</td>
           </tr>
         </table>
 
         <div style="background-color: #f1f5f9; padding: 16px; border-radius: 8px; border-left: 4px solid #0058be; margin-top: 10px;">
           <p style="margin: 0 0 6px 0; font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase;">Message Content:</p>
-          <p style="margin: 0; font-size: 14px; color: #1e293b; white-space: pre-wrap; line-height: 1.6;">${payload.message}</p>
+          <p style="margin: 0; font-size: 14px; color: #1e293b; white-space: pre-wrap; line-height: 1.6;">${message}</p>
         </div>
 
         <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0; text-align: center;">
-          <a href="mailto:${payload.email}?subject=Re: ${encodeURIComponent(payload.subject)}" 
+          <a href="${replyUrl}"
              style="display: inline-block; background-color: #2170e4; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600;">
-            Reply to ${payload.name}
+            Reply to ${name}
           </a>
         </div>
       </div>
@@ -71,7 +81,7 @@ export async function sendContactNotificationEmail(payload: EmailPayload): Promi
       });
 
       await transporter.sendMail({
-        from: `"${payload.name} via Portfolio" <${env.SMTP_USER}>`,
+        from: `Portfolio Contact <${env.SMTP_USER}>`,
         replyTo: payload.email,
         to: recipientEmail,
         subject: `[Portfolio Contact] ${payload.subject}`,
@@ -86,7 +96,7 @@ export async function sendContactNotificationEmail(payload: EmailPayload): Promi
     }
   } else {
     // Log simulation if SMTP variables are not set yet
-    logger.info(`📧 [EMAIL NOTIFICATION DISPATCHED] To: ${recipientEmail} | Subject: ${payload.subject} | From: ${payload.email} (${payload.name})`);
+    logger.info('Contact notification skipped because SMTP is not configured.');
     return { success: true, simulated: true };
   }
 }

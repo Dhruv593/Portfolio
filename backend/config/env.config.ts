@@ -34,17 +34,18 @@ if (!_env.success) {
 }
 
 const isProduction = _env.data.NODE_ENV === 'production';
+const insecureDevelopmentDefaults = new Set(['dev-admin-password', 'dev-super-secret-jwt-key-2026']);
 
 // Critical Security Assertions for Production Deployments
 if (isProduction) {
-  if (!_env.data.ADMIN_PASSWORD || _env.data.ADMIN_PASSWORD.length < 8) {
+  if (!_env.data.ADMIN_PASSWORD || _env.data.ADMIN_PASSWORD.length < 12 || insecureDevelopmentDefaults.has(_env.data.ADMIN_PASSWORD)) {
     throw new Error(
-      '❌ SECURITY ERROR: You must configure a unique and secure "ADMIN_PASSWORD" environment variable of at least 8 characters for production deployment.'
+      'SECURITY ERROR: Set a unique ADMIN_PASSWORD of at least 12 characters for production.'
     );
   }
-  if (!_env.data.JWT_SECRET || _env.data.JWT_SECRET.length < 16) {
+  if (!_env.data.JWT_SECRET || _env.data.JWT_SECRET.length < 32 || insecureDevelopmentDefaults.has(_env.data.JWT_SECRET)) {
     throw new Error(
-      '❌ SECURITY ERROR: You must configure a unique, high-entropy "JWT_SECRET" environment variable of at least 16 characters for production deployment.'
+      'SECURITY ERROR: Set a unique random JWT_SECRET of at least 32 characters for production.'
     );
   }
 }

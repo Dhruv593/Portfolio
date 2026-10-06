@@ -36,10 +36,10 @@ router.get('/', async (_req, res) => {
 
     res.append('Server-Timing', `portfolio-read;dur=${(performance.now() - started).toFixed(1)}`);
     return res.json({
-      projects: (projects ?? dbStore.projects).sort((a, b) =>
+      projects: (projects ?? dbStore.projects).filter((project) => project.status === 'Published').sort((a, b) =>
         (a.displayOrder ?? Number.MAX_SAFE_INTEGER) - (b.displayOrder ?? Number.MAX_SAFE_INTEGER)
       ),
-      blogs: blogs ?? dbStore.blogs,
+      blogs: (blogs ?? dbStore.blogs).filter((blog) => blog.status === 'Published'),
       experience: experience ?? dbStore.experience,
       education: education ?? dbStore.education,
       skills: skills ?? dbStore.skills,

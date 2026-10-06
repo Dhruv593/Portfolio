@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { blogService } from '../services/blog.service.js';
 import { sendSuccess, sendError } from '../utils/apiResponse.js';
+import { isAdminRequest } from '../middleware/auth.middleware.js';
 
 export class BlogController {
   async getCategories(req: Request, res: Response) {
@@ -25,7 +26,7 @@ export class BlogController {
   async getBlogs(req: Request, res: Response) {
     try {
       const search = req.query.search as string;
-      const status = req.query.status as string;
+      const status = isAdminRequest(req) ? req.query.status as string : 'Published';
       const page = parseInt((req.query.page as string) || '1', 10);
       const limit = parseInt((req.query.limit as string) || '10', 10);
 
@@ -44,7 +45,7 @@ export class BlogController {
   async getBlogById(req: Request, res: Response) {
     try {
       const blog = await blogService.getBlogByIdOrSlug(req.params.id);
-      if (!blog) return sendError(res, 'Blog post not found', 404);
+      if (!blog || (!isAdminRequest(req) && blog.status !== 'Published')) return sendError(res, 'Blog post not found', 404);
       return sendSuccess(res, blog);
     } catch (err: any) {
       return sendError(res, err.message || 'Failed to fetch blog post');

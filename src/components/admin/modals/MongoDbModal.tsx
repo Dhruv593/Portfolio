@@ -89,7 +89,7 @@ export const MongoDbModal: React.FC<MongoDbModalProps> = ({
               <p className="text-xs text-slate-600 leading-relaxed">
                 {mongoConfig.connected
                   ? `Connected to database: portfolio_admin. Changes saved from the Admin Console will persist directly to your MongoDB cluster.`
-                  : 'Currently storing projects in local persistent JSON storage. You can set MONGODB_URI in your .env file or enter your connection string below to sync live.'}
+                  : 'Set MONGODB_URI in your environment for a persistent connection. A connection entered below lasts only until this server instance stops.'}
               </p>
               {mongoConfig.error && (
                 <p className="text-xs font-semibold text-red-600 pt-1">
@@ -106,7 +106,7 @@ export const MongoDbModal: React.FC<MongoDbModalProps> = ({
               MongoDB Connection String
             </label>
             <input
-              type="text"
+              type="password"
               required
               placeholder="mongodb+srv://user:password@cluster.mongodb.net/portfolio"
               value={uriInput}

@@ -29,7 +29,6 @@ export const AdminAuthModal: React.FC<AdminAuthModalProps> = ({
       const token = res.data?.token || res.token;
 
       if (res.success && token) {
-        localStorage.setItem('admin_auth_token', token);
         sessionStorage.setItem('admin_auth_token', token);
         setPassword('');
         onSuccess();

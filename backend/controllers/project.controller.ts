@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { projectService } from '../services/project.service.js';
 import { sendSuccess, sendError } from '../utils/apiResponse.js';
+import { isAdminRequest } from '../middleware/auth.middleware.js';
 
 export class ProjectController {
   async getCategories(req: Request, res: Response) {
@@ -25,7 +26,7 @@ export class ProjectController {
   async getProjects(req: Request, res: Response) {
     try {
       const search = req.query.search as string;
-      const status = req.query.status as string;
+      const status = isAdminRequest(req) ? req.query.status as string : 'Published';
       const page = parseInt(req.query.page as string || '1', 10);
       const limit = parseInt(req.query.limit as string || '10', 10);
 
@@ -44,7 +45,7 @@ export class ProjectController {
   async getProjectById(req: Request, res: Response) {
     try {
       const project = await projectService.getProjectById(req.params.id);
-      if (!project) return sendError(res, 'Project not found', 404);
+      if (!project || (!isAdminRequest(req) && project.status !== 'Published')) return sendError(res, 'Project not found', 404);
       return sendSuccess(res, project);
     } catch (err: any) {
       return sendError(res, err.message || 'Failed to fetch project');

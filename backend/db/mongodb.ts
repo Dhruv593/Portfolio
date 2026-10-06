@@ -10,6 +10,7 @@ class DatabaseService {
   private isConnected = false;
   private connectionError = '';
   private currentUri = '';
+  private runtimeUri = '';
   private lastSyncedAt = '';
   private connectingPromise: Promise<boolean> | null = null;
 
@@ -23,7 +24,7 @@ class DatabaseService {
   }
 
   public async connect(customUri?: string): Promise<boolean> {
-    const targetUri = (customUri || env.MONGODB_URI || dbStore.mongoUri || '').trim();
+    const targetUri = (customUri || this.runtimeUri || env.MONGODB_URI || '').trim();
 
     if (!targetUri) {
       this.isConnected = false;
@@ -60,12 +61,9 @@ class DatabaseService {
         await this.client.connect();
         this.db = this.client.db('portfolio_admin');
         this.isConnected = true;
+        if (customUri) this.runtimeUri = targetUri;
         this.connectionError = '';
-        logger.mongoStatus('CONNECTED', targetUri);
-        if (customUri) {
-          dbStore.mongoUri = targetUri;
-          saveJsonStore();
-        }
+        logger.mongoStatus('CONNECTED');
 
         return true;
       } catch (err: any) {
@@ -73,8 +71,8 @@ class DatabaseService {
         await this.client?.close().catch(() => {});
         this.db = null;
         this.client = null;
-        this.connectionError = err.message || 'Failed to connect to MongoDB cluster';
-        logger.mongoStatus('FAILED', targetUri, this.connectionError);
+        this.connectionError = 'Failed to connect to MongoDB cluster';
+        logger.mongoStatus('FAILED');
         return false;
       } finally {
         this.connectingPromise = null;
@@ -154,7 +152,6 @@ class DatabaseService {
     return {
       connected: this.isConnected,
       error: this.connectionError,
-      uri: this.currentUri ? this.currentUri.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@') : '',
       dbName: 'portfolio_admin',
       lastSynced: this.lastSyncedAt || undefined,
     };

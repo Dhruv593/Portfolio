@@ -6,7 +6,7 @@ class ApiClient {
   private baseUrl = '/api';
 
   private getAuthToken(): string | null {
-    return localStorage.getItem('admin_auth_token');
+    return sessionStorage.getItem('admin_auth_token');
   }
 
   async request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
@@ -32,7 +32,7 @@ class ApiClient {
     const defaultHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
       'Cache-Control': 'no-store',
-      ...(token ? { Authorization: `Bearer ${token}`, 'X-Admin-Token': token } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
 
     const config: RequestInit = {

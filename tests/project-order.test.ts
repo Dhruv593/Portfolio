@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, readFileSync, unlinkSync, rmdirSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -31,7 +31,6 @@ test('new projects remain first and dashboard positions persist', async () => {
     assert.deepEqual(JSON.parse(readFileSync(join(scratch, 'portfolio_db.json'), 'utf8')).projects.map((project: { id: string }) => project.id), ['c', created.id, 'a', 'b']);
   } finally {
     process.chdir(originalDirectory);
-    unlinkSync(join(scratch, 'portfolio_db.json'));
-    rmdirSync(scratch);
+    rmSync(scratch, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   }
 });

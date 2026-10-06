@@ -5,12 +5,13 @@ import { dbService } from '../db/mongodb.js';
 import { sendContactNotificationEmail } from '../services/emailService.js';
 import { logger } from '../utils/logger.js';
 import { ContactMessage } from '../../src/types.js';
+import { env } from '../config/env.config.js';
 
 const contactSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email address'),
-  subject: z.string().min(1, 'Subject is required'),
-  message: z.string().min(1, 'Message content is required'),
+  name: z.string().trim().min(1, 'Name is required').max(100),
+  email: z.email('Invalid email address').max(254),
+  subject: z.string().trim().min(1, 'Subject is required').max(150),
+  message: z.string().trim().min(1, 'Message content is required').max(5000),
 });
 
 export const submitContactMessage = async (req: Request, res: Response): Promise<void> => {
@@ -27,17 +28,15 @@ export const submitContactMessage = async (req: Request, res: Response): Promise
       read: false,
     };
 
-    // 1. Save to Memory / JSON DB
-    dbStore.messages.unshift(newMsg);
-    saveJsonStore();
-
-    // 2. Save to MongoDB if connected
     const db = dbService.getDb();
     if (db) {
-      await db.collection('messages').insertOne({ ...newMsg, _id: newMsg.id } as any).catch((err) => {
-        logger.error('Failed to insert message into MongoDB', err);
-      });
+      await db.collection('messages').insertOne({ ...newMsg, _id: newMsg.id } as any);
+    } else if (env.IS_PROD) {
+      res.status(503).json({ success: false, message: 'Contact form is temporarily unavailable.' });
+      return;
     }
+    dbStore.messages.unshift(newMsg);
+    if (!env.IS_PROD) saveJsonStore();
 
     // 3. Dispatch Notification Email
     const emailResult = await sendContactNotificationEmail({
@@ -51,7 +50,6 @@ export const submitContactMessage = async (req: Request, res: Response): Promise
     res.status(201).json({
       success: true,
       message: 'Your message has been sent successfully and saved to the database.',
-      data: newMsg,
       emailDispatched: emailResult.success,
     });
   } catch (error: any) {

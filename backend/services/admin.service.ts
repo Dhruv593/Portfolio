@@ -11,7 +11,7 @@ export class AdminService {
       const token = jwt.sign(
         { role: 'admin', timestamp: Date.now() },
         env.JWT_SECRET,
-        { expiresIn: '7d' }
+        { expiresIn: '8h', algorithm: 'HS256' }
       );
       return { success: true, token };
     }

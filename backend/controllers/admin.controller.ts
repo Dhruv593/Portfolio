@@ -45,7 +45,7 @@ export class AdminController {
 
       if (connected) {
         await dbService.syncCollections();
-        return sendSuccess(res, { message: 'MongoDB connected and synced successfully!' });
+        return sendSuccess(res, { message: 'MongoDB connected. Set MONGODB_URI in the deployment environment to keep this connection after a restart.' });
       }
 
       const status = dbService.getStatus();
