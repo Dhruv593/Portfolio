@@ -32,30 +32,24 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile }) => {
   };
 
   return (
-    <section id="contact" className="pt-12 pb-20 sm:py-20 max-w-6xl mx-auto px-6 sm:px-8 lg:px-10 space-y-8 sm:space-y-12 scroll-mt-20">
-      <div className="text-center space-y-2 max-w-2xl mx-auto">
-        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#151c27]">
+    <section id="contact" className="pt-12 pb-20 sm:py-20 max-w-6xl mx-auto px-6 sm:px-8 lg:px-10 space-y-6 sm:space-y-10 scroll-mt-20">
+      <div className="mx-auto max-w-2xl text-center">
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#151c27]">
           Let's Build Something Together
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-10 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8 items-start">
         {/* Direct contact option appears before the form on narrow screens. */}
-        <div className="lg:col-start-1 lg:row-start-1 lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-5 sm:p-7 shadow-sm space-y-4">
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-[#151c27]">Contact Information</h3>
-            <p className="text-slate-600 text-sm leading-relaxed">
-              Fill out the inquiry form or reach out directly via email or social links.
-            </p>
-          </div>
+        <div className="lg:col-start-1 lg:row-start-1 lg:col-span-2 rounded-xl border border-slate-200 bg-white p-4 sm:p-6 space-y-2">
+          <h3 className="text-base font-semibold text-[#151c27]">Contact Information</h3>
 
-          <div className="space-y-4 text-sm">
+          <div className="space-y-1 text-sm">
             {profile.email && (
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
                   <Mail className="w-5 h-5 text-slate-500 shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-sm text-slate-500">Email</p>
                     <a href={`mailto:${profile.email}`} className="font-medium text-sm text-[#0058be] break-all hover:underline">{profile.email}</a>
                   </div>
                 </div>
@@ -75,7 +69,6 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile }) => {
               <div className="flex items-center gap-3">
                 <MapPin className="w-5 h-5 text-slate-500 shrink-0" />
                 <div>
-                  <p className="text-sm text-slate-500">Location</p>
                   <p className="font-medium text-sm text-slate-800">{profile.location}</p>
                 </div>
               </div>
@@ -83,7 +76,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile }) => {
           </div>
 
           {/* Social Links */}
-          <div className="pt-4 border-t border-slate-200 flex flex-wrap items-center gap-1">
+          <div className="border-t border-slate-100 pt-1 flex flex-wrap items-center gap-1">
             {profile.github && (
               <a
                 href={profile.github}
@@ -126,7 +119,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ profile }) => {
         </div>
 
         {/* Right Side: Contact Form */}
-        <div className="lg:col-start-3 lg:row-start-1 lg:col-span-3 rounded-2xl border border-slate-200 bg-white p-5 sm:p-7 shadow-sm">
+        <div className="lg:col-start-3 lg:row-start-1 lg:col-span-3 rounded-xl border border-slate-200 bg-white p-5 sm:p-7">
           {contactSuccess ? (
             <div className="text-center py-12 space-y-4">
               <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">

@@ -19,12 +19,12 @@ export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionProps> = (
 
   return (
     <section id="projects" className="px-6 pt-12 pb-20 sm:px-8 sm:py-20 lg:px-10 scroll-mt-20">
-      <div className="max-w-6xl mx-auto space-y-9 sm:space-y-12">
-        <h2 className="text-center text-3xl sm:text-4xl font-extrabold tracking-tight text-[#151c27]">
+      <div className="max-w-6xl mx-auto space-y-8 sm:space-y-10">
+        <h2 className="mx-auto max-w-2xl text-center text-3xl sm:text-4xl font-bold tracking-tight text-[#151c27]">
           Crafted Applications & Systems
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {featuredProjects.map((project) => (
             <ProjectCard key={project.id} project={project} onSelect={onSelectProject} />
           ))}

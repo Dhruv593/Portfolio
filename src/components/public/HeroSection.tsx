@@ -20,12 +20,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 }) => {
   return (
     <section id="hero" className="relative pt-16 sm:pt-20 pb-12 sm:pb-20 px-6 sm:px-8 lg:px-10 max-w-6xl mx-auto overflow-hidden flex flex-col justify-center min-h-[calc(100svh-5rem)] scroll-mt-20">
-      {/* Decorative Ambient Blue Glows (Background Mesh) */}
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 w-[750px] h-[360px] bg-gradient-to-tr from-[#2170e4]/5 via-transparent to-blue-200/5 rounded-full blur-3xl pointer-events-none -z-10" />
-
-      {/* Background Micro Grid Pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] opacity-15 pointer-events-none -z-10" />
-
       {/* Responsive introduction and graph layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-4 lg:gap-12 w-full relative z-10">
         
@@ -36,7 +30,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <div className="space-y-3.5">
             <h1 className="text-4xl sm:text-6xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight text-[#151c27] leading-[1.1]">
               Hi, I'm{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0058be] to-[#2170e4]">
+              <span className="text-[#0058be]">
                 {profile.name || 'Portfolio Admin'}
               </span>
             </h1>
@@ -111,7 +105,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
 
         {/* Right Column: AI Neural Network Graph (circular motion, slightly compact & centered) */}
-        <div className="lg:col-span-5 w-full h-[210px] sm:h-[280px] lg:h-[320px] relative flex items-center justify-center opacity-70">
+        <div className="lg:col-span-5 w-full h-[180px] sm:h-[240px] lg:h-[280px] relative flex items-center justify-center opacity-45">
           <AiHeroGraph className="w-full h-full max-w-md mx-auto" />
         </div>
 

@@ -20,12 +20,22 @@ if (env.IS_PROD) app.set('trust proxy', 1);
 // 3. Core Security & Parsing Middleware
 app.use(
   helmet({
-    contentSecurityPolicy: {
+    contentSecurityPolicy: env.IS_PROD ? {
+      useDefaults: false,
       directives: {
-        defaultSrc: ["'none'"],
+        defaultSrc: ["'self'"],
+        baseUri: ["'self'"],
+        objectSrc: ["'none'"],
         frameAncestors: ["'none'"],
+        formAction: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
+        imgSrc: ["'self'", 'https:', 'data:', 'blob:'],
+        connectSrc: ["'self'", 'https://api.cloudinary.com'],
+        mediaSrc: ["'self'", 'https:', 'blob:'],
       },
-    },
+    } : false,
     crossOriginEmbedderPolicy: false,
   })
 );

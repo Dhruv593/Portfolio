@@ -1,5 +1,5 @@
 import React from 'react';
-import { Award, GraduationCap } from 'lucide-react';
+import { Award } from 'lucide-react';
 import { EducationItem } from '../../types';
 
 interface EducationSectionProps {
@@ -44,20 +44,17 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ education = 
 
   return (
     <section id="education" className="pt-10 sm:pt-12 pb-20 sm:pb-24 bg-white border-y border-slate-200/80 px-6 sm:px-8 lg:px-10 scroll-mt-20">
-      <div className="max-w-6xl mx-auto space-y-12">
-        <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#151c27]">
+      <div className="max-w-6xl mx-auto space-y-8 sm:space-y-10">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#151c27]">
             Education & Qualifications
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 border-t border-slate-200">
           {sortedEducation.map((edu) => (
-            <div key={edu.id} className="bg-slate-50 rounded-2xl p-6 space-y-3">
+            <div key={edu.id} className="border-b border-slate-200 py-6 space-y-3">
               <div className="flex items-start justify-between gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white text-slate-600 flex items-center justify-center shrink-0">
-                  <GraduationCap className="w-5 h-5" />
-                </div>
                 <span className="text-sm font-medium text-slate-500">
                   {edu.period}
                 </span>
@@ -65,7 +62,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ education = 
 
               <div>
                 <h3 className="text-lg font-bold text-[#151c27]">{edu.degree}</h3>
-                <p className="text-sm font-semibold text-[#0058be]">{edu.institution}</p>
+                <p className="text-sm font-medium text-[#0058be]">{edu.institution}</p>
               </div>
 
               {edu.description && (

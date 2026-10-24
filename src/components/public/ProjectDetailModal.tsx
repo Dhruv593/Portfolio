@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { X, ExternalLink, Github, Tag, Layers } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { X, ExternalLink, Github, Layers } from 'lucide-react';
 import { Project } from '../../types';
 import { normalizeImageUrl } from '../../utils/imageUtils';
 
@@ -9,24 +9,47 @@ interface ProjectDetailModalProps {
 }
 
 export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClose }) => {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     if (!project) return;
-    const closeOnEscape = (event: KeyboardEvent) => {
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    closeButtonRef.current?.focus();
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
+      if (event.key !== 'Tab') return;
+
+      const focusable: HTMLElement[] = dialogRef.current
+        ? Array.from(dialogRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'))
+        : [];
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
-    window.addEventListener('keydown', closeOnEscape);
-    return () => window.removeEventListener('keydown', closeOnEscape);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      previousFocus?.focus();
+    };
   }, [project, onClose]);
 
   if (!project) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div role="dialog" aria-modal="true" aria-labelledby="project-dialog-title" className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto relative flex flex-col justify-between">
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="project-dialog-title" className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto relative flex flex-col justify-between">
         
         {/* Sticky Modal Header */}
         <div className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-6 py-4 flex items-center justify-between z-20">
-          <div className="flex items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <span className="text-sm font-medium text-slate-600">
               {project.category || 'Case Study'}
             </span>
@@ -34,6 +57,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project,
           </div>
 
           <button
+            ref={closeButtonRef}
             onClick={onClose}
             className="flex h-11 w-11 items-center justify-center text-slate-500 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
             aria-label="Close project details"
@@ -65,15 +89,9 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project,
           </div>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-2 pt-1">
+          <div className="flex flex-wrap gap-x-4 gap-y-1 pt-1 text-sm text-slate-600">
             {project.tags.map((tag) => (
-              <span
-                key={tag}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600"
-              >
-                <Tag className="w-3.5 h-3.5 text-slate-500" />
-                <span>{tag}</span>
-              </span>
+              <span key={tag}>{tag}</span>
             ))}
           </div>
 
